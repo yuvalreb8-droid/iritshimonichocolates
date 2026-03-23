@@ -49,9 +49,8 @@ img {
   right: 0;
   left: 0;
   z-index: 100;
-  background: #fffff2;
-  box-shadow: 0 2px 20px rgba(102, 37, 2, 0.08);
-  transition: box-shadow 0.3s;
+  background: #7C3913;
+  box-shadow: none;
 }
 
 .navbar__inner {
@@ -66,7 +65,7 @@ img {
 .navbar__logo {
   font-family: 'Secular One', sans-serif;
   font-size: 1.6rem;
-  color: #662502;
+  color: #fffff2;
   font-weight: 700;
 }
 
@@ -78,7 +77,7 @@ img {
 .navbar__links a {
   font-size: 1rem;
   font-weight: 500;
-  color: #662502;
+  color: #fffff2;
   transition: color 0.3s;
   position: relative;
 }
@@ -116,10 +115,11 @@ img {
   display: block;
   width: 26px;
   height: 2.5px;
-  background: #662502;
+  background: #fffff2;
   border-radius: 2px;
   transition: transform 0.3s, opacity 0.3s;
 }
+
 
 /* ══════════════════════════════════════
    HERO SECTION
@@ -131,6 +131,7 @@ img {
   display: flex;
   flex-direction: column;
   padding-top: 70px;
+  padding-bottom: 160px;
   z-index: 1;
   overflow: hidden;
 }
@@ -279,17 +280,19 @@ img {
 }
 
 /* ══════════════════════════════════════
-   WAVE DIVIDER (between all sections)
+   WAVE DIVIDER (between sections, pulls up into the section above)
    ══════════════════════════════════════ */
 .wave-divider {
   position: relative;
+  width: 100%;
   height: 160px;
   margin-top: -160px;
-  z-index: 2;
+  z-index: 10;
   pointer-events: none;
 }
 
 .wave-divider svg {
+  display: block;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -305,6 +308,7 @@ img {
   position: relative;
   background: #ffffc2;
   padding: 5rem 0 0;
+  padding-bottom: 160px;
   z-index: 1;
   overflow: hidden;
 }
@@ -449,6 +453,7 @@ img {
   position: relative;
   background: #662502;
   padding: 5rem 0 0;
+  padding-bottom: 160px;
   z-index: 1;
   overflow: hidden;
 }
@@ -655,11 +660,11 @@ img {
     top: 100%;
     right: 0;
     left: 0;
-    background: #fffff2;
+    background: #7C3913;
     flex-direction: column;
     padding: 1rem 2rem 1.5rem;
     gap: 1rem;
-    box-shadow: 0 8px 20px rgba(102, 37, 2, 0.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   }
 
   .navbar__links.active {

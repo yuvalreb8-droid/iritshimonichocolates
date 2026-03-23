@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const phase = currentOffset * 0.01;
     const wave = buildWave(phase);
 
-    // Apply to all wave dividers
+    // Section dividers
     document.querySelectorAll('.wave-divider').forEach(divider => {
       const wavePath = divider.querySelector('.wavePath');
       const fillPath = divider.querySelector('.fillPath');
