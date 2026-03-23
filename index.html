@@ -3,297 +3,255 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>סדנאות שוקולד | חוויה של טעם</title>
-  <meta name="description" content="סדנאות שוקולד מיוחדות לאירועים פרטיים וחברות. חוויה ייחודית של יצירה וטעם.">
+  <title>שוקולדות | אירית שמעוני – סדנאות שוקולד</title>
+  <meta name="description" content="סדנאות שוקולד מיוחדות לאירועים פרטיים וחברות. חוויה ייחודית של יצירה וטעם עם אירית שמעוני.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=David+Libre:wght@400;500;700&family=Heebo:wght@300;400;500;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&family=Secular+One&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
   <!-- ══════════════════════════════════════
-       HERO SECTION
-       Wave is the BOTTOM EDGE of this section
+       HERO SECTION (75vh)
        ══════════════════════════════════════ -->
   <section id="hero" class="hero">
-    <div class="hero__overlay"></div>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <div class="navbar__inner">
+        <a href="#hero" class="navbar__logo">שוקולדות</a>
+        <ul class="navbar__links">
+          <li><a href="#workshop">הסדנה</a></li>
+          <li><a href="#qa">שאלות ותשובות</a></li>
+          <li><a href="#contact">צרו קשר</a></li>
+        </ul>
+        <button class="navbar__toggle" aria-label="תפריט">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Secondary color stripe running through the middle -->
+    <div class="hero__stripe" aria-hidden="true"></div>
+
     <div class="hero__content">
-      <h1 class="hero__title">סדנאות שוקולד<br><span>חוויה של טעם</span></h1>
-      <p class="hero__subtitle">יצירה, טעם ורגעים בלתי נשכחים</p>
-      <a href="tel:+972501234567" class="btn btn--primary">צרו קשר</a>
-    </div>
-    <div class="hero__scroll-indicator">
-      <span>גלגלו למטה</span>
-      <div class="hero__scroll-arrow">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 5v14M5 12l7 7 7-7"/>
-        </svg>
+      <!-- Left side (text) — appears on the right visually in RTL -->
+      <div class="hero__text">
+        <h1 class="hero__title">שוקולדות</h1>
+        <p class="hero__subtitle-line1">היי. אני אירית שמעוני ואני מנחה סדנאות שוקולד כבר מעל 15 שנה</p>
+        <p class="hero__subtitle-line2">ומזמינה אתכם לחוויה שמשלבת יצירה, למידה והמון טעימות</p>
+      </div>
+
+      <!-- Right side (photo) — appears on the left visually in RTL -->
+      <div class="hero__image">
+        <div class="hero__blob-circle">
+          <!-- Placeholder for Irit's photo — replace src later -->
+          <img src="images/irit-placeholder.jpg" alt="אירית שמעוני" onerror="this.style.display='none'">
+          <div class="hero__blob-placeholder">תמונה תתווסף בקרוב</div>
+        </div>
       </div>
     </div>
-    <!-- Wave melting into Workshop (cream) — PART OF hero section -->
-    <div class="section-wave section-wave--bottom">
-      <svg viewBox="0 0 1440 150" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path class="wave-layer"
-          d="M0,80 C120,110 240,40 360,70 C480,100 600,30 720,60 C840,90 960,20 1080,55 C1200,90 1320,35 1440,65 L1440,150 L0,150 Z"
-          data-morph="M0,65 C120,35 240,95 360,55 C480,25 600,85 720,50 C840,20 960,80 1080,45 C1200,15 1320,75 1440,50 L1440,150 L0,150 Z"
-          fill="#e8dbc8"/>
-        <path class="wave-layer"
-          d="M0,90 C160,120 280,50 420,85 C560,115 680,45 820,75 C960,105 1080,40 1220,70 C1340,95 1400,55 1440,80 L1440,150 L0,150 Z"
-          data-morph="M0,75 C160,45 280,105 420,65 C560,35 680,95 820,60 C960,30 1080,90 1220,55 C1340,25 1400,85 1440,60 L1440,150 L0,150 Z"
-          fill="#d4c4a8"/>
-        <path class="wave-layer"
-          d="M0,100 C200,130 320,60 480,95 C640,125 760,55 920,85 C1080,115 1200,50 1340,80 C1400,95 1430,70 1440,90 L1440,150 L0,150 Z"
-          data-morph="M0,85 C200,55 320,115 480,75 C640,45 760,105 920,70 C1080,40 1200,100 1340,65 C1400,45 1430,85 1440,70 L1440,150 L0,150 Z"
-          fill="#faf6f0"/>
-      </svg>
+
+    <!-- Three praline placeholders scattered -->
+    <div class="hero__praline hero__praline--1" aria-hidden="true">
+      <img src="images/praline-1.png" alt="" onerror="this.parentElement.classList.add('placeholder')">
+      <span class="praline-ph">פרלין</span>
     </div>
+    <div class="hero__praline hero__praline--2" aria-hidden="true">
+      <img src="images/praline-2.png" alt="" onerror="this.parentElement.classList.add('placeholder')">
+      <span class="praline-ph">פרלין</span>
+    </div>
+    <div class="hero__praline hero__praline--3" aria-hidden="true">
+      <img src="images/praline-3.png" alt="" onerror="this.parentElement.classList.add('placeholder')">
+      <span class="praline-ph">פרלין</span>
+    </div>
+
+    <!-- Hero bottom padding for wave -->
+    <div style="padding-bottom: 160px;"></div>
   </section>
 
+  <!-- WAVE DIVIDER: Hero → Workshop -->
+  <div class="wave-divider" id="wave1">
+    <svg class="wave-svg" viewBox="0 0 1440 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path class="fillPath" fill="#ffffc2" stroke="none" />
+      <path class="wavePath" fill="none" stroke="#ff7200" stroke-width="2.5" />
+    </svg>
+  </div>
+
   <!-- ══════════════════════════════════════
-       WORKSHOP SECTION
-       No wave needed — sits flush between hero wave and about wave
+       WORKSHOP (סדנה) SECTION
        ══════════════════════════════════════ -->
   <section id="workshop" class="workshop">
-    <div class="workshop__sticky">
-      <div class="workshop__slides">
-        <!-- Slide 1: split layout -->
-        <div class="workshop__slide workshop__slide--active" data-slide="0">
-          <div class="workshop__slide-inner workshop__slide--split">
-            <div class="workshop__slide-image">
-              <img src="images/people at workshop 1.png" alt="אנשים בסדנת שוקולד" loading="lazy">
-            </div>
-            <div class="workshop__slide-text">
-              <h2>סדנאות שוקולד<br>לאנשים מיוחדים</h2>
-            </div>
+    <!-- Secondary stripe through middle -->
+    <div class="workshop__stripe" aria-hidden="true"></div>
+
+    <div class="workshop__grid">
+      <!-- Upper Right: Text block -->
+      <div class="workshop__block workshop__block--text workshop__block--upper-right">
+        <h2>סדנת שוקולד חווייתית לקבוצות ולמשפחות</h2>
+        <p>דמיינו שולחן מלא שוקולד איכותי, ריחות מתוקים באוויר וכולם יוצרים יחד בידיים.</p>
+        <p>הסדנה מתאימה ל: משפחות, קבוצות, חברים, ימי הולדת, ימי גיבוש ואירועים קטנים</p>
+        <p>אין צורך בניסיון קודם – רק אהבה לשוקולד ולכיף משותף.</p>
+      </div>
+
+      <!-- Upper Left: Gallery image block -->
+      <div class="workshop__block workshop__block--gallery workshop__block--upper-left">
+        <p class="gallery__caption">תלחצו כדי לראות תמונות מהסדנאות</p>
+        <div class="gallery__stack" onclick="openGallery('workshops')">
+          <div class="gallery__back-img">
+            <img src="images/workshop-gallery-back.jpg" alt="" onerror="this.style.display='none'">
+            <div class="gallery__placeholder">תמונה</div>
           </div>
-        </div>
-        <!-- Slide 2: chocolate grid -->
-        <div class="workshop__slide" data-slide="1">
-          <div class="workshop__slide-inner workshop__slide--grid">
-            <div class="grid-item"><img src="images/chocolate picture 1.png" alt="שוקולד 1" loading="lazy"></div>
-            <div class="grid-item"><img src="images/chocolate picture 2.png" alt="שוקולד 2" loading="lazy"></div>
-            <div class="grid-item"><img src="images/chocolate picture 3.png" alt="שוקולד 3" loading="lazy"></div>
-            <div class="grid-item"><img src="images/chocolate picture 4.png" alt="שוקולד 4" loading="lazy"></div>
-          </div>
-        </div>
-        <!-- Slide 3: people grid -->
-        <div class="workshop__slide" data-slide="2">
-          <div class="workshop__slide-inner workshop__slide--grid">
-            <div class="grid-item"><img src="images/people at workshop 2.png" alt="אנשים בסדנה 2" loading="lazy"></div>
-            <div class="grid-item"><img src="images/people at workshop 3.png" alt="אנשים בסדנה 3" loading="lazy"></div>
-            <div class="grid-item"><img src="images/people at workshop 4.png" alt="אנשים בסדנה 4" loading="lazy"></div>
-            <div class="grid-item"><img src="images/people at workshop 5.png" alt="אנשים בסדנה 5" loading="lazy"></div>
-          </div>
-        </div>
-        <!-- Slide 4: chocolate grid -->
-        <div class="workshop__slide" data-slide="3">
-          <div class="workshop__slide-inner workshop__slide--grid">
-            <div class="grid-item"><img src="images/chocolate picture 5.png" alt="שוקולד 5" loading="lazy"></div>
-            <div class="grid-item"><img src="images/chocolate picture 6.png" alt="שוקולד 6" loading="lazy"></div>
-            <div class="grid-item"><img src="images/chocolate picture 7.png" alt="שוקולד 7" loading="lazy"></div>
-            <div class="grid-item"><img src="images/chocolate picture 8.png" alt="שוקולד 8" loading="lazy"></div>
+          <div class="gallery__front-img">
+            <img src="images/workshop-gallery-front.jpg" alt="תמונות מהסדנאות" onerror="this.style.display='none'">
+            <div class="gallery__placeholder">תמונה מהסדנאות</div>
           </div>
         </div>
       </div>
-      <div class="workshop__indicators">
-        <button class="workshop__dot workshop__dot--active" data-index="0" aria-label="שקף 1"></button>
-        <button class="workshop__dot" data-index="1" aria-label="שקף 2"></button>
-        <button class="workshop__dot" data-index="2" aria-label="שקף 3"></button>
-        <button class="workshop__dot" data-index="3" aria-label="שקף 4"></button>
+
+      <!-- Lower Right: Text block -->
+      <div class="workshop__block workshop__block--text workshop__block--lower-right">
+        <p><strong>בסדנה נכין ונלמד להכין:</strong></p>
+        <ul>
+          <li>פרלינים בעבודת יד עם מגוון מילויים מפתיעים</li>
+          <li>טראפלס שוקולד עשירים ומפנקים</li>
+          <li>חטיפי שוקולד מעוצבים וטעימים במיוחד</li>
+        </ul>
+        <p>במהלך הסדנה תלמדו טכניקות עבודה עם שוקולד, תיצרו יחד ותטעמו בלי סוף ובסיום – כל משתתף יוצא עם קופסת שוקולדים שהכין בעצמו.</p>
+      </div>
+
+      <!-- Lower Left: Gallery image block -->
+      <div class="workshop__block workshop__block--gallery workshop__block--lower-left">
+        <p class="gallery__caption">תלחצו כדי לראות תוצאות מסדנאות קודמות</p>
+        <div class="gallery__stack" onclick="openGallery('results')">
+          <div class="gallery__back-img">
+            <img src="images/results-gallery-back.jpg" alt="" onerror="this.style.display='none'">
+            <div class="gallery__placeholder">תמונה</div>
+          </div>
+          <div class="gallery__front-img">
+            <img src="images/results-gallery-front.jpg" alt="תוצאות מסדנאות" onerror="this.style.display='none'">
+            <div class="gallery__placeholder">תוצאות מסדנאות</div>
+          </div>
+        </div>
       </div>
     </div>
-    <!-- BOTTOM wave: cream workshop melting into dark brown About -->
-    <div class="section-wave section-wave--bottom">
-      <svg viewBox="0 0 1440 150" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path class="wave-layer"
-          d="M0,80 C120,110 240,40 360,70 C480,100 600,30 720,60 C840,90 960,20 1080,55 C1200,90 1320,35 1440,65 L1440,150 L0,150 Z"
-          data-morph="M0,65 C120,35 240,95 360,55 C480,25 600,85 720,50 C840,20 960,80 1080,45 C1200,15 1320,75 1440,50 L1440,150 L0,150 Z"
-          fill="#6b5a48"/>
-        <path class="wave-layer"
-          d="M0,90 C160,120 280,50 420,85 C560,115 680,45 820,75 C960,105 1080,40 1220,70 C1340,95 1400,55 1440,80 L1440,150 L0,150 Z"
-          data-morph="M0,75 C160,45 280,105 420,65 C560,35 680,95 820,60 C960,30 1080,90 1220,55 C1340,25 1400,85 1440,60 L1440,150 L0,150 Z"
-          fill="#5a4030"/>
-        <path class="wave-layer"
-          d="M0,100 C200,130 320,60 480,95 C640,125 760,55 920,85 C1080,115 1200,50 1340,80 C1400,95 1430,70 1440,90 L1440,150 L0,150 Z"
-          data-morph="M0,85 C200,55 320,115 480,75 C640,45 760,105 920,70 C1080,40 1200,100 1340,65 C1400,45 1430,85 1440,70 L1440,150 L0,150 Z"
-          fill="#3e2c1c"/>
-      </svg>
-    </div>
+
+    <div style="padding-bottom: 160px;"></div>
   </section>
 
-  <!-- ══════════════════════════════════════
-       ABOUT SECTION (dark brown)
-       No top wave needed (Workshop's bottom wave handles it)
-       Wave at BOTTOM = melting into white Q&A
-       ══════════════════════════════════════ -->
-  <section id="about" class="about">
-    <!-- Blobs -->
-    <div class="blob blob--1" aria-hidden="true">
-      <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg"><path d="M421.9,283.2c-4.6,78.6-62.3,148.5-132.8,173.1c-70.5,24.6-153.8,3.9-201.7-50.8c-47.9-54.7-60.4-143.3-25.5-207.7c34.9-64.4,117.2-104.5,192.1-96.8C329,109.3,426.5,204.6,421.9,283.2z"/></svg>
-    </div>
-    <div class="blob blob--2" aria-hidden="true">
-      <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg"><path d="M455.4,301.1c-14.2,83.4-72.6,160.6-149.4,183.1c-76.8,22.5-172-9.7-220.8-73.6c-48.8-63.9-51.2-159.5-9.5-224.6c41.7-65.1,127.5-99.7,203.8-88.3C355.8,108.9,469.6,217.7,455.4,301.1z"/></svg>
-    </div>
-    <!-- Content -->
-    <div class="container">
-      <div class="about__content">
-        <h2 class="section-title section-title--light">קצת עלינו</h2>
-        <div class="about__divider"></div>
-        <p class="about__text">
-          אנחנו מאמינים שהשוקולד הוא הרבה יותר מפינוק — הוא חוויה.
-          בסדנאות שלנו תגלו את הסודות מאחורי השוקולד האיכותי ביותר,
-          תיצרו ביחד ותיקחו הביתה זיכרון מתוק שלא ישכח.
-        </p>
-      </div>
-    </div>
-    <!-- BOTTOM wave: dark brown melting into white Q&A -->
-    <div class="section-wave section-wave--bottom">
-      <svg viewBox="0 0 1440 150" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path class="wave-layer"
-          d="M0,75 C160,105 340,35 500,70 C660,105 840,30 1000,65 C1160,100 1300,35 1440,75 L1440,150 L0,150 Z"
-          data-morph="M0,60 C160,30 340,95 500,55 C660,20 840,85 1000,50 C1160,15 1300,80 1440,50 L1440,150 L0,150 Z"
-          fill="#6b5a48"/>
-        <path class="wave-layer"
-          d="M0,88 C120,118 300,45 460,82 C620,115 800,38 960,72 C1120,108 1280,42 1440,82 L1440,150 L0,150 Z"
-          data-morph="M0,72 C120,42 300,110 460,68 C620,30 800,98 960,58 C1120,22 1280,88 1440,60 L1440,150 L0,150 Z"
-          fill="#d4c4a8"/>
-        <path class="wave-layer"
-          d="M0,100 C180,130 340,55 520,92 C700,128 860,48 1040,82 C1220,118 1360,52 1440,92 L1440,150 L0,150 Z"
-          data-morph="M0,82 C180,50 340,118 520,72 C700,32 860,105 1040,62 C1220,22 1360,95 1440,68 L1440,150 L0,150 Z"
-          fill="#ffffff"/>
-      </svg>
-    </div>
-  </section>
+  <!-- WAVE DIVIDER: Workshop → Q&A -->
+  <div class="wave-divider" id="wave2">
+    <svg class="wave-svg" viewBox="0 0 1440 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path class="fillPath" fill="#662502" stroke="none" />
+      <path class="wavePath" fill="none" stroke="#ff7200" stroke-width="2.5" />
+    </svg>
+  </div>
 
   <!-- ══════════════════════════════════════
-       Q&A SECTION (white)
-       No top wave needed (About's bottom wave handles it)
-       Wave at BOTTOM = melting into dark brown Contact
+       Q&A SECTION
        ══════════════════════════════════════ -->
   <section id="qa" class="qa">
-    <div class="blob blob--3" aria-hidden="true">
-      <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg"><path d="M398.7,321.8c-24.8,66.3-83.2,119.7-150.5,133c-67.3,13.3-143.5-13.5-186.7-68.4c-43.2-54.9-53.4-137.9-17.3-199.5c36.1-61.6,118.5-101.8,193.3-93c74.8,8.8,141.9,66.6,173.3,131.5C442.3,290.3,423.5,255.5,398.7,321.8z"/></svg>
-    </div>
-    <div class="blob blob--4" aria-hidden="true">
-      <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg"><path d="M437.5,282.9c-6.8,72.7-54.5,141.7-118.5,172.3c-64,30.6-144.3,22.8-198.9-15.2c-54.6-38-83.5-106.2-76.2-171.3c7.3-65.1,50.8-127.1,110.9-157.6c60.1-30.5,136.8-29.5,193.3,2.8C404.6,142.4,444.3,210.2,437.5,282.9z"/></svg>
-    </div>
+    <!-- Secondary stripe -->
+    <div class="qa__stripe" aria-hidden="true"></div>
+
     <div class="container">
-      <h2 class="section-title">שאלות ותשובות</h2>
-      <div class="about__divider" style="margin: 0 auto 3rem auto;"></div>
+      <h2 class="qa__title">שאלות ותשובות</h2>
+
+      <div class="qa__highlights">
+        <div class="qa__highlight-item">הסדנה כשעה וחצי</div>
+        <div class="qa__highlight-item">לא צריך נסיון קודם רק אהבה לשוקולד</div>
+        <div class="qa__highlight-item">מתאים לארוע פרטי או חברה</div>
+        <div class="qa__highlight-item">מתקיים אצלנו או אצלכם</div>
+      </div>
+
       <div class="accordion">
         <div class="accordion__item">
-          <button class="accordion__header" aria-expanded="false"><span>כמה זמן הסדנה?</span><svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg></button>
-          <div class="accordion__body"><p>הסדנה נמשכת כשעה וחצי.</p></div>
+          <button class="accordion__header" aria-expanded="false">
+            <span>כמה זמן הסדנה?</span>
+            <svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg>
+          </button>
+          <div class="accordion__body"><p>הסדנה נמשכת כשעה וחצי של חוויה, יצירה וטעימות.</p></div>
         </div>
         <div class="accordion__item">
-          <button class="accordion__header" aria-expanded="false"><span>איפה היא מתקיימת?</span><svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg></button>
+          <button class="accordion__header" aria-expanded="false">
+            <span>איפה היא מתקיימת?</span>
+            <svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg>
+          </button>
           <div class="accordion__body"><p>הסדנה מתקיימת אצלנו או אצלכם — איפה שנוח לכם.</p></div>
         </div>
         <div class="accordion__item">
-          <button class="accordion__header" aria-expanded="false"><span>לכמה משתתפים זה מתאים?</span><svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg></button>
+          <button class="accordion__header" aria-expanded="false">
+            <span>לכמה משתתפים זה מתאים?</span>
+            <svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg>
+          </button>
           <div class="accordion__body"><p>מתאים לקבוצות קטנות וגדולות — מאירוע פרטי ועד אירוע חברה.</p></div>
         </div>
         <div class="accordion__item">
-          <button class="accordion__header" aria-expanded="false"><span>מאיזה גיל?</span><svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg></button>
-          <div class="accordion__body"><p>הסדנה מתאימה לכל הגילאים.</p></div>
+          <button class="accordion__header" aria-expanded="false">
+            <span>מאיזה גיל?</span>
+            <svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg>
+          </button>
+          <div class="accordion__body"><p>הסדנה מתאימה לכל הגילאים — ילדים ומבוגרים כאחד.</p></div>
         </div>
         <div class="accordion__item">
-          <button class="accordion__header" aria-expanded="false"><span>האם צריך ניסיון קודם?</span><svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg></button>
-          <div class="accordion__body"><p>לא צריך ניסיון קודם, רק אהבה לשוקולד.</p></div>
+          <button class="accordion__header" aria-expanded="false">
+            <span>האם צריך ניסיון קודם?</span>
+            <svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg>
+          </button>
+          <div class="accordion__body"><p>לא צריך שום ניסיון קודם — רק אהבה לשוקולד ורצון ליהנות!</p></div>
         </div>
         <div class="accordion__item">
-          <button class="accordion__header" aria-expanded="false"><span>האם אפשר להזמין לאירוע פרטי/חברה?</span><svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg></button>
-          <div class="accordion__body"><p>בהחלט! הסדנה מתאימה לאירוע פרטי, ימי גיבוש, ימי הולדת ואירועי חברה.</p></div>
+          <button class="accordion__header" aria-expanded="false">
+            <span>האם אפשר להזמין לאירוע פרטי/חברה?</span>
+            <svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg>
+          </button>
+          <div class="accordion__body"><p>בהחלט! הסדנה מתאימה לאירועים פרטיים, ימי גיבוש, ימי הולדת ואירועי חברה.</p></div>
         </div>
         <div class="accordion__item">
-          <button class="accordion__header" aria-expanded="false"><span>מה המחיר כולל?</span><svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg></button>
+          <button class="accordion__header" aria-expanded="false">
+            <span>מה המחיר כולל?</span>
+            <svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg>
+          </button>
           <div class="accordion__body"><p>המחיר כולל את כל חומרי הגלם, הציוד, ההדרכה, וכמובן — את השוקולדים שתכינו לקחת הביתה.</p></div>
         </div>
       </div>
     </div>
-    <!-- BOTTOM wave: white melting into dark brown Contact -->
-    <div class="section-wave section-wave--bottom">
-      <svg viewBox="0 0 1440 150" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path class="wave-layer"
-          d="M0,68 C200,98 360,28 540,68 C720,108 900,28 1080,62 C1260,98 1380,38 1440,68 L1440,150 L0,150 Z"
-          data-morph="M0,52 C200,22 360,92 540,48 C720,8 900,82 1080,42 C1260,8 1380,72 1440,48 L1440,150 L0,150 Z"
-          fill="#6b4c30"/>
-        <path class="wave-layer"
-          d="M0,82 C160,112 320,42 500,78 C680,112 840,38 1020,72 C1200,108 1340,42 1440,82 L1440,150 L0,150 Z"
-          data-morph="M0,68 C160,38 320,108 500,62 C680,18 840,92 1020,52 C1200,18 1340,85 1440,58 L1440,150 L0,150 Z"
-          fill="#5a4030"/>
-        <path class="wave-layer"
-          d="M0,95 C180,128 380,52 560,92 C740,128 920,48 1100,82 C1280,118 1380,52 1440,92 L1440,150 L0,150 Z"
-          data-morph="M0,78 C180,45 380,112 560,68 C740,28 920,102 1100,62 C1280,22 1380,92 1440,65 L1440,150 L0,150 Z"
-          fill="#3e2c1c"/>
-      </svg>
-    </div>
+
+    <div style="padding-bottom: 160px;"></div>
   </section>
 
+  <!-- WAVE DIVIDER: Q&A → Contact -->
+  <div class="wave-divider" id="wave3">
+    <svg class="wave-svg" viewBox="0 0 1440 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path class="fillPath" fill="#7C3913" stroke="none" />
+      <path class="wavePath" fill="none" stroke="#ff7200" stroke-width="2.5" />
+    </svg>
+  </div>
+
   <!-- ══════════════════════════════════════
-       CONTACT SECTION (dark brown)
-       No top wave needed (Q&A's bottom wave handles it)
-       Wave at BOTTOM = melting into footer
+       CONTACT SECTION
        ══════════════════════════════════════ -->
   <section id="contact" class="contact">
-    <div class="blob blob--5" aria-hidden="true">
-      <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg"><path d="M421.9,283.2c-4.6,78.6-62.3,148.5-132.8,173.1c-70.5,24.6-153.8,3.9-201.7-50.8c-47.9-54.7-60.4-143.3-25.5-207.7c34.9-64.4,117.2-104.5,192.1-96.8C329,109.3,426.5,204.6,421.9,283.2z"/></svg>
-    </div>
-    <div class="blob blob--6" aria-hidden="true">
-      <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg"><path d="M455.4,301.1c-14.2,83.4-72.6,160.6-149.4,183.1c-76.8,22.5-172-9.7-220.8-73.6c-48.8-63.9-51.2-159.5-9.5-224.6c41.7-65.1,127.5-99.7,203.8-88.3C355.8,108.9,469.6,217.7,455.4,301.1z"/></svg>
-    </div>
     <div class="container">
-      <h2 class="section-title section-title--light">צרו קשר</h2>
-      <div class="about__divider about__divider--gold" style="margin: 0 auto 3rem auto;"></div>
-      <div class="contact__wrapper">
-        <div class="contact__info">
-          <p class="contact__intro">נשמח לשמוע מכם ולתאם סדנה מושלמת.</p>
-          <div class="contact__methods">
-            <a href="tel:+972501234567" class="contact__method">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-              <span>050-123-4567</span>
-            </a>
-            <a href="https://wa.me/972501234567" target="_blank" rel="noopener noreferrer" class="contact__method contact__method--whatsapp">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-              <span>WhatsApp</span>
-            </a>
-          </div>
-          <div class="contact__social">
-            <a href="#" aria-label="Instagram" class="contact__social-link"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
-            <a href="#" aria-label="Facebook" class="contact__social-link"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
-            <a href="#" aria-label="TikTok" class="contact__social-link"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 104 4V4a5 5 0 005 5"/></svg></a>
-          </div>
-        </div>
-        <form class="contact__form" id="contactForm">
-          <div class="form-group"><label for="name">שם</label><input type="text" id="name" name="name" required autocomplete="name" placeholder="השם שלכם"></div>
-          <div class="form-group"><label for="phone">טלפון</label><input type="tel" id="phone" name="phone" required autocomplete="tel" placeholder="מספר טלפון"></div>
-          <div class="form-group"><label for="message">הודעה</label><textarea id="message" name="message" rows="4" placeholder="ספרו לנו על האירוע שלכם..."></textarea></div>
-          <button type="submit" class="btn btn--gold btn--full">שליחה</button>
-        </form>
-      </div>
-    </div>
-    <!-- BOTTOM wave: dark brown melting into darker footer -->
-    <div class="section-wave section-wave--bottom section-wave--small">
-      <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path class="wave-layer"
-          d="M0,35 C180,55 360,15 540,35 C720,55 900,15 1080,35 C1260,55 1380,20 1440,35 L1440,80 L0,80 Z"
-          data-morph="M0,25 C180,10 360,45 540,25 C720,5 900,45 1080,25 C1260,5 1380,40 1440,25 L1440,80 L0,80 Z"
-          fill="#3e2c1c"/>
-        <path class="wave-layer"
-          d="M0,45 C200,65 380,20 580,42 C780,65 960,18 1160,40 C1320,58 1400,25 1440,42 L1440,80 L0,80 Z"
-          data-morph="M0,35 C200,15 380,55 580,32 C780,10 960,52 1160,30 C1320,12 1400,48 1440,32 L1440,80 L0,80 Z"
-          fill="#2a1d12"/>
-      </svg>
+      <h2 class="contact__title">צרו קשר</h2>
+      <a href="tel:0528225999" class="contact__phone">צלצלו אליי – 0528225999</a>
     </div>
   </section>
 
   <!-- FOOTER -->
   <footer class="footer">
     <div class="container">
-      <p>&copy; 2026 סדנאות שוקולד. כל הזכויות שמורות.</p>
+      <p>&copy; 2026 שוקולדות | אירית שמעוני. כל הזכויות שמורות.</p>
     </div>
   </footer>
+
+  <!-- Gallery Lightbox -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+    <button class="lightbox__close" onclick="closeLightbox()">&times;</button>
+    <div class="lightbox__content">
+      <p class="lightbox__message">תמונות יתווספו בקרוב</p>
+    </div>
+  </div>
 
   <script src="js/main.js"></script>
 </body>

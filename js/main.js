@@ -1,288 +1,118 @@
-/* ========================================
-   CHOCOLATE WORKSHOP — MAIN JS
-   ======================================== */
+/* ══════════════════════════════════════
+   MAIN JS — Irit Shimoni Chocolate
+   ══════════════════════════════════════ */
 
 document.addEventListener('DOMContentLoaded', () => {
-  initWaveMorphing();
-  initWorkshopSlideshow();
-  initAccordion();
-  initContactForm();
-  initScrollReveal();
-  initBlobReveal();
+
+  /* ── Mobile Nav Toggle ── */
+  const toggle = document.querySelector('.navbar__toggle');
+  const navLinks = document.querySelector('.navbar__links');
+  if (toggle && navLinks) {
+    toggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      const spans = toggle.querySelectorAll('span');
+      if (navLinks.classList.contains('active')) {
+        spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+        spans[1].style.opacity = '0';
+        spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+      } else {
+        spans[0].style.transform = '';
+        spans[1].style.opacity = '';
+        spans[2].style.transform = '';
+      }
+    });
+    // Close nav on link click
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+        const spans = toggle.querySelectorAll('span');
+        spans[0].style.transform = '';
+        spans[1].style.opacity = '';
+        spans[2].style.transform = '';
+      });
+    });
+  }
+
+  /* ── Accordion ── */
+  document.querySelectorAll('.accordion__header').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.parentElement;
+      const isOpen = item.classList.contains('active');
+
+      // Close all
+      document.querySelectorAll('.accordion__item').forEach(i => i.classList.remove('active'));
+      document.querySelectorAll('.accordion__header').forEach(b => b.setAttribute('aria-expanded', 'false'));
+
+      // Open clicked (if it was closed)
+      if (!isOpen) {
+        item.classList.add('active');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  /* ══════════════════════════════════════
+     SCROLL-REACTIVE WAVE DIVIDERS
+     ══════════════════════════════════════ */
+  const VW = 1440, VH = 160;
+  const AMP = 28;
+  const FREQ = 0.8;
+  const SPEED = 0.4;
+  const BASE_Y = VH * 0.55;
+
+  let currentOffset = 0, targetOffset = 0;
+
+  window.addEventListener('scroll', () => {
+    targetOffset = window.scrollY * SPEED;
+  });
+
+  function buildWave(phase) {
+    const pts = 120;
+    let d = '';
+    for (let i = 0; i <= pts; i++) {
+      const x = (i / pts) * VW;
+      const y = BASE_Y + Math.sin((x / VW) * Math.PI * 2 * FREQ + phase) * AMP;
+      d += i === 0 ? `M ${x},${y} ` : `L ${x},${y} `;
+    }
+    return d;
+  }
+
+  function animateWaves() {
+    currentOffset += (targetOffset - currentOffset) * 0.06;
+    const phase = currentOffset * 0.01;
+    const wave = buildWave(phase);
+
+    // Apply to all wave dividers
+    document.querySelectorAll('.wave-divider').forEach(divider => {
+      const wavePath = divider.querySelector('.wavePath');
+      const fillPath = divider.querySelector('.fillPath');
+      if (wavePath) wavePath.setAttribute('d', wave);
+      if (fillPath) fillPath.setAttribute('d', wave + ` L ${VW},${VH * 2} L 0,${VH * 2} Z`);
+    });
+
+    requestAnimationFrame(animateWaves);
+  }
+
+  animateWaves();
+
 });
 
-/* ========================================
-   SVG WAVE PATH MORPHING
-   Smooth scroll-driven wave animation
-   using SVG path interpolation
-   ======================================== */
-function initWaveMorphing() {
-  const dividers = document.querySelectorAll('.wave-divider');
-  if (!dividers.length) return;
+/* ── Gallery / Lightbox ── */
+function openGallery(type) {
+  const lightbox = document.getElementById('lightbox');
+  if (lightbox) lightbox.classList.add('active');
+}
 
-  const waveInstances = [];
+function closeLightbox(e) {
+  if (e && e.target !== e.currentTarget && !e.target.classList.contains('lightbox__close')) return;
+  const lightbox = document.getElementById('lightbox');
+  if (lightbox) lightbox.classList.remove('active');
+}
 
-  dividers.forEach(divider => {
-    const layers = divider.querySelectorAll('.wave-layer');
-
-    layers.forEach(layer => {
-      const pathA = layer.getAttribute('d');
-      const pathB = layer.getAttribute('data-morph');
-      if (!pathA || !pathB) return;
-
-      const numbersA = extractNumbers(pathA);
-      const numbersB = extractNumbers(pathB);
-
-      if (numbersA.length !== numbersB.length) return;
-
-      // Build a template string with placeholders
-      const template = buildTemplate(pathA, numbersA);
-
-      waveInstances.push({
-        element: layer,
-        dividerEl: divider,
-        numbersA: numbersA,
-        numbersB: numbersB,
-        template: template,
-        currentProgress: 0,
-      });
-    });
-  });
-
-  if (!waveInstances.length) return;
-
-  let ticking = false;
-
-  function updateMorphing() {
-    const scrollY = window.scrollY;
-    const viewportH = window.innerHeight;
-    const docHeight = document.documentElement.scrollHeight - viewportH;
-
-    waveInstances.forEach(wave => {
-      const rect = wave.dividerEl.getBoundingClientRect();
-      const dividerCenter = rect.top + rect.height / 2;
-
-      // Calculate progress based on divider position relative to viewport
-      // When divider is at bottom of viewport → 0, at top → 1
-      // This creates smooth morphing as you scroll past each wave
-      let progress = 1 - (dividerCenter / viewportH);
-
-      // Also add a subtle continuous oscillation based on total scroll
-      const oscillation = Math.sin(scrollY * 0.003) * 0.15;
-
-      // Combine position-based morph with scroll oscillation
-      progress = Math.max(0, Math.min(1, progress + oscillation));
-
-      // Smooth the progress with easing
-      progress = easeInOutSine(progress);
-
-      // Only update if progress changed enough (performance)
-      if (Math.abs(progress - wave.currentProgress) < 0.002) return;
-      wave.currentProgress = progress;
-
-      // Interpolate between path A and path B
-      const interpolated = wave.numbersA.map((a, i) => {
-        return a + (wave.numbersB[i] - a) * progress;
-      });
-
-      // Build the new path string
-      const newPath = applyTemplate(wave.template, interpolated);
-      wave.element.setAttribute('d', newPath);
-    });
-
-    ticking = false;
+// Close on Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const lightbox = document.getElementById('lightbox');
+    if (lightbox) lightbox.classList.remove('active');
   }
-
-  function onScroll() {
-    if (!ticking) {
-      requestAnimationFrame(updateMorphing);
-      ticking = true;
-    }
-  }
-
-  window.addEventListener('scroll', onScroll, { passive: true });
-
-  // Initial render
-  updateMorphing();
-}
-
-/* --- Path parsing utilities --- */
-
-// Extract all numbers (including negatives and decimals) from a path string
-function extractNumbers(pathStr) {
-  const matches = pathStr.match(/-?\d+\.?\d*/g);
-  return matches ? matches.map(Number) : [];
-}
-
-// Build a template with {0}, {1}, {2}... placeholders where numbers were
-function buildTemplate(pathStr, numbers) {
-  let template = pathStr;
-  let idx = 0;
-
-  // Replace each number with a unique placeholder
-  // We need to be careful to replace in order and not re-match placeholders
-  template = template.replace(/-?\d+\.?\d*/g, () => {
-    return `{${idx++}}`;
-  });
-
-  return template;
-}
-
-// Apply interpolated numbers back into the template
-function applyTemplate(template, numbers) {
-  let result = template;
-  for (let i = 0; i < numbers.length; i++) {
-    result = result.replace(`{${i}}`, Math.round(numbers[i] * 10) / 10);
-  }
-  return result;
-}
-
-// Easing function for smooth, organic feel
-function easeInOutSine(t) {
-  return -(Math.cos(Math.PI * t) - 1) / 2;
-}
-
-/* ========================================
-   BLOB REVEAL ON SCROLL
-   ======================================== */
-function initBlobReveal() {
-  const blobs = document.querySelectorAll('.blob');
-  if (!blobs.length) return;
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    },
-    { threshold: 0.1 }
-  );
-
-  blobs.forEach(blob => observer.observe(blob));
-}
-
-/* ========================================
-   WORKSHOP SLIDESHOW (SCROLL-DRIVEN FADE)
-   ======================================== */
-function initWorkshopSlideshow() {
-  const workshop = document.getElementById('workshop');
-  if (!workshop) return;
-
-  const slides = workshop.querySelectorAll('.workshop__slide');
-  const dots = workshop.querySelectorAll('.workshop__dot');
-  const totalSlides = slides.length;
-  let currentSlide = 0;
-
-  function setActiveSlide(index) {
-    if (index === currentSlide) return;
-
-    slides.forEach((slide, i) => {
-      slide.classList.toggle('workshop__slide--active', i === index);
-    });
-    dots.forEach((dot, i) => {
-      dot.classList.toggle('workshop__dot--active', i === index);
-    });
-
-    currentSlide = index;
-  }
-
-  dots.forEach(dot => {
-    dot.addEventListener('click', () => {
-      const index = parseInt(dot.dataset.index, 10);
-      setActiveSlide(index);
-    });
-  });
-
-  function onScroll() {
-    const rect = workshop.getBoundingClientRect();
-    const workshopTop = window.scrollY + rect.top;
-    const scrollInSection = window.scrollY - workshopTop;
-    const sectionHeight = workshop.offsetHeight - window.innerHeight;
-
-    if (scrollInSection < 0 || scrollInSection > sectionHeight) return;
-
-    const progress = scrollInSection / sectionHeight;
-    const slideIndex = Math.min(
-      Math.floor(progress * totalSlides),
-      totalSlides - 1
-    );
-
-    setActiveSlide(slideIndex);
-  }
-
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
-}
-
-/* ========================================
-   ACCORDION
-   ======================================== */
-function initAccordion() {
-  const items = document.querySelectorAll('.accordion__item');
-
-  items.forEach(item => {
-    const header = item.querySelector('.accordion__header');
-
-    header.addEventListener('click', () => {
-      const isOpen = item.classList.contains('open');
-
-      items.forEach(other => {
-        if (other !== item) {
-          other.classList.remove('open');
-          other.querySelector('.accordion__header').setAttribute('aria-expanded', 'false');
-        }
-      });
-
-      item.classList.toggle('open', !isOpen);
-      header.setAttribute('aria-expanded', !isOpen);
-    });
-  });
-}
-
-/* ========================================
-   CONTACT FORM
-   ======================================== */
-function initContactForm() {
-  const form = document.getElementById('contactForm');
-  if (!form) return;
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const name = form.querySelector('#name').value.trim();
-    const phone = form.querySelector('#phone').value.trim();
-
-    if (!name || !phone) {
-      alert('אנא מלאו שם וטלפון.');
-      return;
-    }
-
-    alert('תודה! נחזור אליכם בהקדם.');
-    form.reset();
-  });
-}
-
-/* ========================================
-   SCROLL REVEAL
-   ======================================== */
-function initScrollReveal() {
-  const revealElements = document.querySelectorAll('.about, .qa, .contact');
-
-  revealElements.forEach(el => el.classList.add('reveal'));
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.15 }
-  );
-
-  revealElements.forEach(el => observer.observe(el));
-}
+});
