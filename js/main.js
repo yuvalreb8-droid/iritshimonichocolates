@@ -7,9 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ── Mobile Nav Toggle ── */
   const toggle = document.querySelector('.navbar__toggle');
   const navLinks = document.querySelector('.navbar__links');
+  const navbar   = document.querySelector('.navbar');
   if (toggle && navLinks) {
     toggle.addEventListener('click', () => {
       navLinks.classList.toggle('active');
+      navbar && navbar.classList.toggle('menu-open');
       const spans = toggle.querySelectorAll('span');
       if (navLinks.classList.contains('active')) {
         spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
@@ -25,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     navLinks.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
         navLinks.classList.remove('active');
+        navbar && navbar.classList.remove('menu-open');
         const spans = toggle.querySelectorAll('span');
         spans[0].style.transform = '';
         spans[1].style.opacity = '';
@@ -32,6 +35,22 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+
+  /* ── Navbar show/hide on scroll ── */
+  let lastScrollY = window.scrollY;
+  window.addEventListener('scroll', () => {
+    const currentScrollY = window.scrollY;
+    navbar.classList.remove('navbar--initial');
+
+    if (currentScrollY > lastScrollY) {
+      // Scrolling down — show navbar
+      navbar.classList.remove('navbar--hidden');
+    } else {
+      // Scrolling up — hide navbar
+      navbar.classList.add('navbar--hidden');
+    }
+    lastScrollY = currentScrollY;
+  });
 
   /* ── Accordion ── */
   document.querySelectorAll('.accordion__header').forEach(btn => {

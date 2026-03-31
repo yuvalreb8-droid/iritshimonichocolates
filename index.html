@@ -8,12 +8,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&family=Secular+One&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/styles.css?v=35">
 </head>
 <body>
 
   <!-- Navigation Bar -->
-  <nav class="navbar">
+  <nav class="navbar navbar--initial">
     <div class="navbar__inner">
       <a href="#hero" class="navbar__logo">שוקולדות</a>
       <ul class="navbar__links">
@@ -25,21 +25,31 @@
         <span></span><span></span><span></span>
       </button>
     </div>
+    <!-- Endless scrolling marquee beneath navbar -->
+    <div class="navbar__marquee" aria-hidden="true">
+      <div class="navbar__marquee-inner">
+        <span>סדנאות שוקולד</span><span>✦</span><span>אירועים פרטיים</span><span>✦</span><span>ימי גיבוש</span><span>✦</span><span>ימי הולדת</span><span>✦</span><span>חוויה ייחודית</span><span>✦</span><span>פרלינים בעבודת יד</span><span>✦</span><span>טראפלס שוקולד</span><span>✦</span><span>סדנאות שוקולד</span><span>✦</span><span>אירועים פרטיים</span><span>✦</span><span>ימי גיבוש</span><span>✦</span><span>ימי הולדת</span><span>✦</span><span>חוויה ייחודית</span><span>✦</span><span>פרלינים בעבודת יד</span><span>✦</span><span>טראפלס שוקולד</span><span>✦</span><span>סדנאות שוקולד</span><span>✦</span><span>אירועים פרטיים</span><span>✦</span><span>ימי גיבוש</span><span>✦</span><span>ימי הולדת</span><span>✦</span><span>חוויה ייחודית</span><span>✦</span><span>פרלינים בעבודת יד</span><span>✦</span><span>טראפלס שוקולד</span><span>✦</span><span>סדנאות שוקולד</span><span>✦</span><span>אירועים פרטיים</span><span>✦</span><span>ימי גיבוש</span><span>✦</span><span>ימי הולדת</span><span>✦</span><span>חוויה ייחודית</span><span>✦</span><span>פרלינים בעבודת יד</span><span>✦</span><span>טראפלס שוקולד</span><span>✦</span>
+      </div>
+    </div>
   </nav>
 
   <!-- ══════════════════════════════════════
        HERO SECTION (75vh)
        ══════════════════════════════════════ -->
   <section id="hero" class="hero">
-    <!-- Secondary color stripe running through the middle -->
-    <div class="hero__stripe" aria-hidden="true"></div>
+    <!-- Organic curved stripe (replaces old straight clip-path) -->
+    <!-- Full-width concave arc band -->
+    <svg class="hero__band" viewBox="0 0 1093 367" aria-hidden="true">
+      <path d="M342.761 366.694C433.648 274.065 592.345 166.689 686.687 175.572C716.177 178.304 724.843 191.036 728.795 200.367C742.834 233.558 726.523 296.473 689.101 367L1070.53 366.265C1106.34 250.808 1099.32 159.822 1049.64 95.8373C981.928 8.63345 855.891 -3.88836 762.065 0.868211C494.691 14.603 209.365 190.711 0 365.042L342.761 366.685V366.694Z" fill="#7C3913"/>
+    </svg>
 
     <div class="hero__content">
       <!-- Left side (text) — appears on the right visually in RTL -->
       <div class="hero__text">
         <h1 class="hero__title">שוקולדות</h1>
-        <p class="hero__subtitle-line1">היי. אני אירית שמעוני ואני מנחה סדנאות שוקולד כבר מעל 15 שנה</p>
-        <p class="hero__subtitle-line2">ומזמינה אתכם לחוויה שמשלבת יצירה, למידה והמון טעימות</p>
+        <p class="hero__hi">סדנאות מתוקות</p>
+        <p class="hero__subtitle-line1">אני מזמינה אתכם לסדנאת שוקולד חוויתית שמשלבת יצירה, למידה והמון טעימות</p>
+        <p class="hero__subtitle-line2">אני אירית ואני מנחת סדנאות שוקולד כבר מעל ל15 שנה</p>
       </div>
 
       <!-- Right side (photo) — appears on the left visually in RTL -->
@@ -52,18 +62,26 @@
       </div>
     </div>
 
-    <!-- Three praline placeholders scattered -->
+    <!-- Main pralines (3 original placements) -->
     <div class="hero__praline hero__praline--1" aria-hidden="true">
-      <img src="images/praline-1.png" alt="" onerror="this.parentElement.classList.add('placeholder')">
-      <span class="praline-ph">פרלין</span>
+      <img src="images/pralines/praline 1.png" alt="">
     </div>
     <div class="hero__praline hero__praline--2" aria-hidden="true">
-      <img src="images/praline-2.png" alt="" onerror="this.parentElement.classList.add('placeholder')">
-      <span class="praline-ph">פרלין</span>
+      <img src="images/pralines/praline 2.png" alt="">
     </div>
     <div class="hero__praline hero__praline--3" aria-hidden="true">
-      <img src="images/praline-3.png" alt="" onerror="this.parentElement.classList.add('placeholder')">
-      <span class="praline-ph">פרלין</span>
+      <img src="images/pralines/praline 3.png" alt="">
+    </div>
+
+    <!-- Extra smaller pralines scattered -->
+    <div class="hero__praline hero__praline--4 hero__praline--small" aria-hidden="true">
+      <img src="images/pralines/praline 5.png" alt="">
+    </div>
+    <div class="hero__praline hero__praline--5 hero__praline--small" aria-hidden="true">
+      <img src="images/pralines/praline 8.png" alt="">
+    </div>
+    <div class="hero__praline hero__praline--6 hero__praline--small" aria-hidden="true">
+      <img src="images/pralines/praline 12.png" alt="">
     </div>
 
   </section>
@@ -80,8 +98,6 @@
        WORKSHOP (סדנה) SECTION
        ══════════════════════════════════════ -->
   <section id="workshop" class="workshop">
-    <!-- Secondary stripe through middle -->
-    <div class="workshop__stripe" aria-hidden="true"></div>
 
     <div class="workshop__grid">
       <!-- Upper Right: Text block -->
@@ -148,8 +164,10 @@
        Q&A SECTION
        ══════════════════════════════════════ -->
   <section id="qa" class="qa">
-    <!-- Secondary stripe -->
-    <div class="qa__stripe" aria-hidden="true"></div>
+    <!-- Full-width concave arc band -->
+    <svg class="qa__stripe" viewBox="0 0 1440 500" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,0 L0,100 C360,300 1080,300 1440,100 L1440,0 L1440,400 L1440,500 C1080,300 360,300 0,500 L0,400 Z" fill="#7C3913" fill-opacity="1"/>
+    </svg>
 
     <div class="container">
       <h2 class="qa__title">שאלות ותשובות</h2>
@@ -249,6 +267,6 @@
     </div>
   </div>
 
-  <script src="js/main.js"></script>
+  <script src="js/main.js?v=10"></script>
 </body>
 </html>

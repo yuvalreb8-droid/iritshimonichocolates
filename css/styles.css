@@ -46,17 +46,29 @@ img {
 .navbar {
   position: fixed;
   top: 0;
-  right: 0;
   left: 0;
-  z-index: 100;
-  background: #7C3913;
-  box-shadow: none;
+  width: 100%;
+  z-index: 1000;
+  background: #662502;
+  overflow: visible;
+  transition: transform 0.3s ease;
+}
+
+.navbar--hidden {
+  transform: translateY(-100%);
+}
+
+.navbar--initial {
+  transform: translateY(-100%);
+  transition: none;
 }
 
 .navbar__inner {
+  position: relative;
+  z-index: 1; /* above ::before */
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0.8rem 2rem;
+  padding: 1rem 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -64,9 +76,12 @@ img {
 
 .navbar__logo {
   font-family: 'Secular One', sans-serif;
-  font-size: 1.6rem;
+  font-size: 2.5rem;
   color: #fffff2;
   font-weight: 700;
+  line-height: 1;          /* prevents extra line-height from inflating height unevenly */
+  display: flex;
+  align-items: center;     /* vertically centers within the flex row */
 }
 
 .navbar__links {
@@ -75,8 +90,8 @@ img {
 }
 
 .navbar__links a {
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 1.2rem;
+  font-weight: 600;
   color: #fffff2;
   transition: color 0.3s;
   position: relative;
@@ -122,34 +137,67 @@ img {
 
 
 /* ══════════════════════════════════════
+   NAVBAR BOTTOM MARQUEE
+   ══════════════════════════════════════ */
+.navbar__marquee {
+  width: 100%;
+  background: #7C3913;
+  overflow: hidden;
+  padding: 0.3rem 0;
+  direction: ltr;
+}
+
+.navbar__marquee-inner {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marqueeScroll 30s linear infinite;
+}
+
+.navbar__marquee-inner span {
+  font-family: 'Secular One', sans-serif;
+  font-size: 0.75rem;
+  color: #fffff2;
+  opacity: 0.7;
+  letter-spacing: 0.1em;
+  padding: 0 1.5rem;
+}
+
+@keyframes marqueeScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ══════════════════════════════════════
    HERO SECTION
    ══════════════════════════════════════ */
 .hero {
   position: relative;
-  min-height: 75vh;
+  min-height: 100vh;
   background: #662502;
   display: flex;
   flex-direction: column;
-  padding-top: 70px;
+  padding-top: 4rem;
   padding-bottom: 160px;
+  margin-top: 0;
+  padding-top: 4rem;
   z-index: 1;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
-.hero__stripe {
+/* Full-width concave arc band */
+.hero__band {
   position: absolute;
-  top: 35%;
+  bottom: 0;
   left: 0;
-  right: 0;
-  height: 120px;
-  background: #7C3913;
+  width: 120%;
+  height: auto;
   z-index: 0;
-  transform: skewY(-2deg);
+  pointer-events: none;
 }
 
 .hero__content {
   position: relative;
-  z-index: 1;
+  z-index: 3;
   max-width: 1200px;
   margin: 0 auto;
   padding: 3rem 2rem;
@@ -157,7 +205,7 @@ img {
   align-items: center;
   justify-content: space-between;
   flex: 1;
-  gap: 3rem;
+  gap: 9rem;
   width: 100%;
 }
 
@@ -168,16 +216,35 @@ img {
 
 .hero__title {
   font-family: 'Secular One', sans-serif;
-  font-size: clamp(3rem, 6vw, 5rem);
+  font-size: clamp(3.75rem, 7.5vw, 6.25rem);
   color: #fffff2;
-  line-height: 1.1;
-  margin-bottom: 1.5rem;
+  line-height: 1.375;
+  margin-bottom: 0;
+}
+
+.hero__hi {
+  font-size: clamp(2.5rem, 5vw, 3.75rem);
+  font-weight: 700;
+  color: #fffff2;
+  margin-bottom: 4rem;
+  line-height: 1.375;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hero__wave-hand {
+  width: clamp(2rem, 4vw, 3rem);
+  height: clamp(2rem, 4vw, 3rem);
+  display: inline-block;
+  transform: rotate(-45deg);
 }
 
 .hero__subtitle-line1 {
+  white-space: nowrap;
   font-size: clamp(1.1rem, 2vw, 1.4rem);
   color: #fffff2;
-  line-height: 1.8;
+  line-height: 2.25;
   font-weight: 300;
   margin-bottom: 0.5rem;
 }
@@ -185,7 +252,7 @@ img {
 .hero__subtitle-line2 {
   font-size: clamp(1.1rem, 2vw, 1.4rem);
   color: #ff7200;
-  line-height: 1.8;
+  line-height: 2.25;
   font-weight: 500;
 }
 
@@ -193,12 +260,12 @@ img {
 .hero__image {
   flex: 0 0 auto;
   position: relative;
-  z-index: 1;
+  z-index: 3;
 }
 
 .hero__blob-circle {
-  width: clamp(250px, 28vw, 380px);
-  height: clamp(250px, 28vw, 380px);
+  width: clamp(300px, 35vw, 500px);
+  height: clamp(300px, 35vw, 500px);
   border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%;
   background: #7C3913;
   overflow: hidden;
@@ -241,9 +308,9 @@ img {
 /* Pralines */
 .hero__praline {
   position: absolute;
-  z-index: 2;
-  width: 70px;
-  height: 70px;
+  z-index: 1;
+  width: 158px;
+  height: 158px;
   pointer-events: none;
 }
 
@@ -254,29 +321,21 @@ img {
   filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
 }
 
-.hero__praline--1 { top: 20%; left: 8%; transform: rotate(-15deg); }
-.hero__praline--2 { bottom: 30%; right: 15%; transform: rotate(20deg); }
-.hero__praline--3 { top: 55%; left: 45%; transform: rotate(-8deg); }
+.hero__praline--1 { top: 8%; left: 2%; transform: rotate(-15deg); }
+.hero__praline--2 { bottom: 12%; right: 35%; transform: rotate(20deg); }
+.hero__praline--3 { top: 45%; right: 2%; transform: rotate(-8deg); }
 
-.hero__praline.placeholder .praline-ph {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 70px;
-  height: 70px;
-  background: #7C3913;
-  border-radius: 50%;
-  color: #fffff2;
-  font-size: 0.7rem;
-  opacity: 0.5;
+/* Extra smaller pralines */
+.hero__praline--small {
+  width: 101px;
+  height: 101px;
 }
+.hero__praline--4 { top: 8%; right: 38%; transform: rotate(12deg); }
+.hero__praline--5 { bottom: 18%; left: 5%; transform: rotate(-22deg); }
+.hero__praline--6 { top: 8%; right: 5%; transform: rotate(30deg); }
 
-.praline-ph {
-  display: none;
-}
-
-.hero__praline.placeholder img {
-  display: none;
+.hero__praline--small img {
+  filter: drop-shadow(0 3px 8px rgba(0,0,0,0.25));
 }
 
 /* ══════════════════════════════════════
@@ -313,17 +372,6 @@ img {
   overflow: hidden;
 }
 
-.workshop__stripe {
-  position: absolute;
-  top: 45%;
-  left: 0;
-  right: 0;
-  height: 140px;
-  background: #7C3913;
-  z-index: 0;
-  opacity: 0.12;
-  transform: skewY(-1.5deg);
-}
 
 .workshop__grid {
   position: relative;
@@ -460,13 +508,14 @@ img {
 
 .qa__stripe {
   position: absolute;
-  top: 40%;
+  top: 50%;
   left: 0;
-  right: 0;
-  height: 120px;
-  background: #7C3913;
+  transform: translateY(-50%);
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  height: 300px;
   z-index: 0;
-  transform: skewY(1.5deg);
+  pointer-events: none;
 }
 
 .qa .container {
