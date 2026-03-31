@@ -17,7 +17,7 @@ body {
   direction: rtl;
   color: #662502;
   overflow-x: hidden;
-  background: #fffff2;
+  background: #ffffff;
 }
 
 a {
@@ -360,64 +360,121 @@ img {
   overflow: visible;
 }
 
+/* Wave1 white fill must NOT bleed into the workshop section */
+#wave1 svg {
+  overflow: hidden;
+}
+
 /* ══════════════════════════════════════
    WORKSHOP (סדנה) SECTION
    ══════════════════════════════════════ */
 .workshop {
   position: relative;
-  background: #ffffc2;
-  padding: 5rem 0 0;
-  padding-bottom: 160px;
+  background-image: url('../images/background.png?v=24');
+  background-size: 170% auto;
+  background-position: top left;
+  background-repeat: no-repeat;
+  padding: 1.5rem 0 0;
   z-index: 1;
   overflow: hidden;
 }
 
+/* SVG stripe no longer needed — background.png is used instead */
+.workshop__stripe {
+  display: none;
+}
 
 .workshop__grid {
   position: relative;
   z-index: 1;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0.5rem 2rem 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3rem;
+  column-gap: 2rem;
+  row-gap: 2rem;
 }
 
 .workshop__block--text {
-  padding: 2rem;
+  padding: 0.5rem 2rem;
 }
 
 .workshop__block--text h2 {
-  font-family: 'Secular One', sans-serif;
-  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-family: 'Rubik', sans-serif;
+  font-weight: 900;
+  font-size: clamp(1.78rem, 3.45vw, 2.36rem);
   color: #662502;
-  margin-bottom: 1rem;
-  line-height: 1.4;
+  margin-bottom: 0.65rem;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
 }
 
 .workshop__block--text p {
+  font-family: 'Heebo', sans-serif;
   font-size: 1.05rem;
-  line-height: 1.8;
+  font-weight: 400;
+  line-height: 1.9;
+  color: rgba(92, 42, 10, 0.82);
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.01em;
+}
+
+/* Intro line — slightly emphasized opener */
+.workshop__block--upper-right p:nth-of-type(1) {
+  font-size: 1.08rem;
+  font-weight: 600;
   color: #662502;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.9rem;
+  letter-spacing: 0.005em;
+}
+
+/* Suitability / audience line — 4th paragraph now */
+.workshop__block--upper-right p:nth-of-type(4) {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #662502;
+  margin-bottom: 0.75rem;
+}
+
+/* Closing statement upper — breathing room, softer tone */
+.workshop__block--upper-right p:last-of-type {
+  margin-top: 1rem;
+  margin-bottom: 0;
+  font-size: 1.02rem;
+  color: rgba(92, 42, 10, 0.68);
+  line-height: 1.85;
+}
+
+/* Closing statement lower — same rhythm as upper */
+.workshop__block--lower-right p:last-of-type {
+  margin-top: 1rem;
+  margin-bottom: 0;
+  font-size: 1.02rem;
+  color: rgba(92, 42, 10, 0.68);
+  line-height: 1.85;
 }
 
 .workshop__block--text ul {
-  padding-right: 1.2rem;
-  margin-bottom: 1rem;
+  padding-right: 1.5rem;
+  margin-top: 0.3rem;
+  margin-bottom: 0.4rem;
 }
 
 .workshop__block--text li {
+  font-family: 'Heebo', sans-serif;
   font-size: 1.05rem;
-  line-height: 1.8;
-  color: #662502;
+  font-weight: 400;
+  line-height: 1.9;
+  color: rgba(92, 42, 10, 0.75);
   list-style: disc;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.65rem;
+  letter-spacing: 0.01em;
 }
 
 .workshop__block--text strong {
   color: #662502;
+  font-weight: 700;
 }
 
 /* Gallery blocks */
@@ -425,73 +482,170 @@ img {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
+  justify-content: center;
+  padding: 0.75rem 2rem;
 }
 
-.gallery__caption {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #662502;
-  margin-bottom: 1rem;
-  text-align: center;
+/* Upper blob: remove top padding so flex-center lands the stack level with the h2 */
+.workshop__block--upper-left {
+  padding-top: 0;
+}
+
+/* Lower text: extra top padding so h2 lines up with the lower blob top */
+.workshop__block--lower-right {
+  padding-top: 1rem;
+}
+
+/* Lower blob: asymmetric horizontal padding pushes stack left (away from right edge) */
+.workshop__block--lower-left {
+  padding-right: 3rem;
+  padding-left: 1rem;
+}
+
+/* Prevent lower back-blob from overflowing the right page edge */
+.workshop__block--lower-left .gallery__back-img {
+  right: 4px;
+}
+
+/* ── Contact-seam separator ─────────────────────────────────────
+   Attached to .gallery__front-img::after.
+   box-shadow: inset 0 0 0 2px  →  crisp 2px ring following the
+   EXACT front blob contour (border-radius: inherit).
+   clip-path: circle(r at cx cy)  →  derived from getBoundingClientRect
+   measurements: rear blob center in front-blob-local coordinates.
+   Only the arc of the front blob edge that falls within the rear
+   blob's area is visible — the true contact segment.
+   overflow:hidden on parent further constrains to blob shape.
+   Lives on the container → zero flicker during crossfade.
+   Values (measured):
+     upper: rear center in front-local = (271, 225), r≈193 → 200
+     lower: rear center in front-local = (249, 225), r≈193 → 200
+──────────────────────────────────────────────────────────────── */
+
+/* Upper blob stack — orange button #ff7200 */
+.workshop__block--upper-left .gallery__front-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 2px rgba(255, 114, 0, 0.55);
+  clip-path: circle(200px at 271px 225px);
+  background: transparent;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Lower blob stack — purple button #B090D0 */
+.workshop__block--lower-left .gallery__front-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 2px rgba(160, 110, 210, 0.82);
+  clip-path: circle(200px at 249px 225px);
+  background: transparent;
+  z-index: 10;
+  pointer-events: none;
 }
 
 .gallery__stack {
   position: relative;
-  width: 280px;
-  height: 280px;
+  width: 480px;
+  height: 480px;
   cursor: pointer;
-  transition: transform 0.3s;
-}
-
-.gallery__stack:hover {
-  transform: scale(1.03);
 }
 
 .gallery__back-img {
   position: absolute;
-  top: 15px;
-  right: -15px;
-  width: 260px;
-  height: 260px;
+  top: 32px;
+  right: -18px;
+  width: 385px;
+  height: 385px;
   border-radius: 55% 45% 50% 50% / 45% 55% 45% 55%;
   overflow: hidden;
-  background: #e8d8a0;
-  box-shadow: 0 8px 25px rgba(102, 37, 2, 0.15);
-  z-index: 0;
+  background: #c8a87a;
+  box-shadow: 0 6px 20px rgba(102, 37, 2, 0.10);
+  z-index: 1;
+  opacity: 0.88;
+  transition: opacity 0.65s ease-in-out;
 }
 
 .gallery__front-img {
-  position: relative;
-  width: 280px;
-  height: 280px;
+  position: absolute;
+  top: 0;
+  right: 20px;
+  width: 425px;
+  height: 425px;
   border-radius: 50% 50% 45% 55% / 55% 45% 55% 45%;
   overflow: hidden;
   background: #d4b870;
-  box-shadow: 0 12px 35px rgba(102, 37, 2, 0.2);
-  z-index: 1;
+  box-shadow: 0 8px 30px rgba(102, 37, 2, 0.14);
+  z-index: 2;
   animation: blobMorph 10s ease-in-out infinite;
+  transition: opacity 0.65s ease-in-out;
 }
 
-.gallery__placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Two-layer crossfade: both img layers are stacked absolutely inside each blob */
+.img-layer {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  color: #662502;
-  font-size: 0.9rem;
-  opacity: 0.5;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: opacity 0.65s ease-in-out;
 }
 
-.gallery__front-img img + .gallery__placeholder,
-.gallery__back-img img + .gallery__placeholder {
-  display: none;
+.img-layer--a {
+  opacity: 1;
+  z-index: 2;
 }
 
-.gallery__front-img img[style*="display: none"] + .gallery__placeholder,
-.gallery__back-img img[style*="display: none"] + .gallery__placeholder {
-  display: flex;
+.img-layer--b {
+  opacity: 0;
+  z-index: 1;
+}
+
+/* Bigger workshop headlines */
+.workshop__block--text h2.workshop__big-h2 {
+  font-size: clamp(2.42rem, 4.37vw, 3.22rem);
+  margin-bottom: 0.75rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+/* Blob carousel buttons */
+.btn-carousel {
+  display: block;
+  width: fit-content;
+  margin: 0.65rem 0 0 auto;
+  padding: 0.55rem 1.8rem;
+  border: none;
+  border-radius: 50px;
+  font-family: 'Heebo', sans-serif;
+  font-size: 0.97rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  color: #ffffff;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-carousel:hover {
+  transform: scale(1.04);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+}
+
+.btn-carousel--orange {
+  background: #ff7200;
+}
+
+.btn-carousel--purple {
+  background: #B090D0;
+  padding: 0.6rem 2rem;
+  font-size: 1rem;
+  margin-top: 0.85rem;
 }
 
 /* ══════════════════════════════════════
@@ -621,35 +775,219 @@ img {
 .contact {
   position: relative;
   background: #7C3913;
-  padding: 5rem 0;
-  text-align: center;
+  padding: 6rem 2rem 7rem;
   z-index: 1;
 }
 
+.contact__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+/* ── Right column: title + info ── */
+.contact__details {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
 .contact__title {
-  font-family: 'Secular One', sans-serif;
-  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-family: 'Rubik', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2.2rem, 4vw, 3rem);
   color: #fffff2;
-  margin-bottom: 2rem;
+  margin-bottom: 0.6rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
-.contact__phone {
-  display: inline-block;
-  font-family: 'Secular One', sans-serif;
-  font-size: clamp(1.5rem, 3.5vw, 2.5rem);
-  color: #fffff2;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 242, 0.3);
-  border-radius: 60px;
-  padding: 1rem 3rem;
-  transition: all 0.3s;
-  direction: ltr;
+.contact__subtitle {
+  font-family: 'Heebo', sans-serif;
+  font-weight: 400;
+  font-size: 1.05rem;
+  color: rgba(255, 255, 242, 0.78);
+  margin-bottom: 2.5rem;
+  line-height: 1.7;
 }
 
-.contact__phone:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: #ff7200;
-  transform: scale(1.03);
+.contact__info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.contact__info-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 242, 0.15);
+  border-radius: 16px;
+  padding: 1rem 1.4rem;
+  transition: background 0.25s, border-color 0.25s, transform 0.2s;
+}
+
+.contact__info-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 242, 0.35);
+  transform: translateX(-3px);
+}
+
+.contact__info-item--wa {
+  background: rgba(37, 211, 102, 0.15);
+  border-color: rgba(37, 211, 102, 0.35);
+}
+
+.contact__info-item--wa:hover {
+  background: rgba(37, 211, 102, 0.25);
+  border-color: rgba(37, 211, 102, 0.6);
+}
+
+.contact__info-item--wa .contact__info-icon {
+  color: #25D366;
+}
+
+.contact__info-icon {
+  color: rgba(255, 255, 242, 0.7);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.contact__info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.contact__info-label {
+  font-family: 'Heebo', sans-serif;
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 242, 0.55);
+  letter-spacing: 0.04em;
+}
+
+.contact__info-value {
+  font-family: 'Heebo', sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #fffff2;
+  letter-spacing: 0.02em;
+}
+
+/* ── Left column: no box, sits directly on section bg ── */
+.contact__form-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact__form-hint {
+  font-family: 'Heebo', sans-serif;
+  font-weight: 400;
+  font-size: 0.9rem;
+  color: rgba(255, 240, 210, 0.6);
+  margin: 0;
+  letter-spacing: 0.01em;
+  direction: rtl;
+}
+
+.contact__textarea {
+  width: 100%;
+  min-height: 120px;
+  background: rgba(255, 248, 235, 0.08);
+  border: 1.5px solid rgba(255, 240, 210, 0.2);
+  border-radius: 16px;
+  padding: 0.95rem 1.2rem;
+  font-family: 'Heebo', sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #fffff2;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.25s, background 0.25s;
+  direction: rtl;
+  box-sizing: border-box;
+}
+
+.contact__textarea::placeholder {
+  color: rgba(255, 240, 210, 0.38);
+}
+
+.contact__textarea:focus {
+  border-color: rgba(255, 200, 130, 0.5);
+  background: rgba(255, 248, 235, 0.13);
+}
+
+/* ── Chocolate bar — the CTA itself ── */
+.contact__choc-btn {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 130px;
+  border: none;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+  background: #3e1a06;
+  transition: transform 0.28s, box-shadow 0.28s;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+}
+
+.contact__choc-btn:hover {
+  transform: translateY(-3px) scale(1.012);
+  box-shadow: 0 14px 44px rgba(0,0,0,0.55);
+}
+
+/* Portrait bar rotated to fill the wide landscape container */
+.contact__choc-img-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.contact__choc-img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* rotate portrait image 90° → becomes wide horizontal bar */
+  height: 400%;
+  width: auto;
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+/* Warm dark scrim so text is legible over the chocolate */
+.contact__choc-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(30, 10, 2, 0.52) 0%,
+    rgba(70, 24, 5, 0.38) 100%
+  );
+}
+
+/* "שלחו הודעה" centered on the bar */
+.contact__choc-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Rubik', sans-serif;
+  font-weight: 900;
+  font-size: 1.5rem;
+  color: #fffff2;
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.65);
+  pointer-events: none;
 }
 
 /* ══════════════════════════════════════
@@ -749,6 +1087,11 @@ img {
     height: 50px;
   }
 
+  .workshop {
+    background-size: cover;
+    background-position: top center;
+  }
+
   .workshop__grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -757,22 +1100,30 @@ img {
 
   .workshop__block--upper-left { order: 2; }
   .workshop__block--upper-right { order: 1; }
-  .workshop__block--lower-right { order: 3; }
   .workshop__block--lower-left { order: 4; }
+  .workshop__block--lower-right { order: 3; }
 
   .gallery__stack {
-    width: 230px;
-    height: 230px;
+    width: 280px;
+    height: 280px;
   }
 
   .gallery__front-img {
-    width: 230px;
-    height: 230px;
+    width: 250px;
+    height: 250px;
+    top: 0;
+    right: 10px;
   }
 
   .gallery__back-img {
-    width: 210px;
-    height: 210px;
+    width: 225px;
+    height: 225px;
+    top: 20px;
+    right: -15px;
+  }
+
+  .gallery__stack.is-advancing .gallery__back-img {
+    transform: translate(-22px, -5px) scale(1.04);
   }
 
   .qa__highlights {
@@ -784,8 +1135,13 @@ img {
     padding: 0.5rem 1rem;
   }
 
-  .contact__phone {
-    padding: 0.8rem 2rem;
+  .contact__inner {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .contact__photo {
+    height: 200px;
   }
 }
 
