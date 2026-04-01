@@ -117,7 +117,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const wavePath = divider.querySelector('.wavePath');
       const fillPath = divider.querySelector('.fillPath');
       if (wavePath) wavePath.setAttribute('d', wave);
-      if (fillPath) fillPath.setAttribute('d', wave + ` L ${VW},${VH * 2} L 0,${VH * 2} Z`);
+      if (fillPath) {
+        if (divider.id === 'wave1') {
+          // Fill ABOVE the curve (hero brown shows above wave)
+          fillPath.setAttribute('d', wave + ` L ${VW},0 L 0,0 Z`);
+        } else {
+          // Fill BELOW the curve (default)
+          fillPath.setAttribute('d', wave + ` L ${VW},${VH * 2} L 0,${VH * 2} Z`);
+        }
+      }
     });
 
     requestAnimationFrame(animateWaves);
