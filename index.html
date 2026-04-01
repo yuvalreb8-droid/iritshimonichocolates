@@ -11,9 +11,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&family=Rubik:wght@700;800;900&family=Secular+One&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=36">
+  <link rel="stylesheet" href="css/styles.css?v=118">
 </head>
 <body>
+
+  <!-- Skip to content link (IS 5568 / WCAG 2.0 AA) -->
+  <a href="#main-content" class="skip-link">דלג לתוכן הראשי</a>
 
   <!-- Navigation Bar -->
   <nav class="navbar navbar--initial">
@@ -39,6 +42,7 @@
   <!-- ══════════════════════════════════════
        HERO SECTION (75vh)
        ══════════════════════════════════════ -->
+  <main id="main-content">
   <section id="hero" class="hero">
     <!-- Organic curved stripe (replaces old straight clip-path) -->
     <!-- Full-width concave arc band -->
@@ -190,65 +194,91 @@
       <path d="M0,0 L0,100 C360,300 1080,300 1440,100 L1440,0 L1440,400 L1440,500 C1080,300 360,300 0,500 L0,400 Z" fill="#7C3913" fill-opacity="1"/>
     </svg>
 
-    <div class="container">
-      <h2 class="qa__title">שאלות ותשובות</h2>
-
-      <div class="qa__highlights">
-        <div class="qa__highlight-item">הסדנה כשעה וחצי</div>
-        <div class="qa__highlight-item">לא צריך נסיון קודם רק אהבה לשוקולד</div>
-        <div class="qa__highlight-item">מתאים לארוע פרטי או חברה</div>
-        <div class="qa__highlight-item">מתקיים אצלנו או אצלכם</div>
+    <div class="qa__layout">
+      <div class="qa__heading">
+        <h2>יש לכם<br>שאלות?<br><span>יש לנו תשובות</span></h2>
+        <p>כל מה שרציתם לדעת על הסדנה לפני שמגיעים</p>
       </div>
 
-      <div class="accordion">
-        <div class="accordion__item">
-          <button class="accordion__header" aria-expanded="false">
-            <span>כמה זמן הסדנה?</span>
-            <svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg>
-          </button>
-          <div class="accordion__body"><p>הסדנה נמשכת כשעה וחצי של חוויה, יצירה וטעימות.</p></div>
+      <div class="qa__cards">
+        <div class="qa__card" role="button" tabindex="0">
+          <div class="qa__card-left">
+            <span class="qa__card-question">כמה זמן הסדנה?</span>
+            <button class="qa__card-btn" aria-label="פתח תשובה">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5l5 5 5-5"/></svg>
+            </button>
+          </div>
+          <div class="qa__card-answer"><p>הסדנה נמשכת כשעה וחצי של חוויה, יצירה וטעימות.</p></div>
         </div>
-        <div class="accordion__item">
-          <button class="accordion__header" aria-expanded="false">
-            <span>איפה היא מתקיימת?</span>
-            <svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg>
-          </button>
-          <div class="accordion__body"><p>הסדנה מתקיימת אצלנו או אצלכם — איפה שנוח לכם.</p></div>
+
+        <div class="qa__card" role="button" tabindex="0">
+          <div class="qa__card-left">
+            <span class="qa__card-question">האם צריך ניסיון קודם?</span>
+            <button class="qa__card-btn" aria-label="פתח תשובה">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5l5 5 5-5"/></svg>
+            </button>
+          </div>
+          <div class="qa__card-answer"><p>לא צריך שום ניסיון קודם — רק אהבה לשוקולד ורצון ליהנות!</p></div>
         </div>
-        <div class="accordion__item">
-          <button class="accordion__header" aria-expanded="false">
-            <span>לכמה משתתפים זה מתאים?</span>
-            <svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg>
-          </button>
-          <div class="accordion__body"><p>מתאים לקבוצות קטנות וגדולות — מאירוע פרטי ועד אירוע חברה.</p></div>
+
+        <div class="qa__card" role="button" tabindex="0">
+          <div class="qa__card-left">
+            <span class="qa__card-question">איפה הסדנה מתקיימת?</span>
+            <button class="qa__card-btn" aria-label="פתח תשובה">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5l5 5 5-5"/></svg>
+            </button>
+          </div>
+          <div class="qa__card-answer"><p>הסדנה מתקיימת אצלנו או אצלכם — איפה שנוח לכם.</p></div>
         </div>
-        <div class="accordion__item">
-          <button class="accordion__header" aria-expanded="false">
-            <span>מאיזה גיל?</span>
-            <svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg>
-          </button>
-          <div class="accordion__body"><p>הסדנה מתאימה לכל הגילאים — ילדים ומבוגרים כאחד.</p></div>
+
+        <div class="qa__card" role="button" tabindex="0">
+          <div class="qa__card-left">
+            <span class="qa__card-question">לכמה משתתפים זה מתאים?</span>
+            <button class="qa__card-btn" aria-label="פתח תשובה">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5l5 5 5-5"/></svg>
+            </button>
+          </div>
+          <div class="qa__card-answer"><p>מתאים לקבוצות קטנות וגדולות — מאירוע פרטי ועד אירוע חברה.</p></div>
         </div>
-        <div class="accordion__item">
-          <button class="accordion__header" aria-expanded="false">
-            <span>האם צריך ניסיון קודם?</span>
-            <svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg>
-          </button>
-          <div class="accordion__body"><p>לא צריך שום ניסיון קודם — רק אהבה לשוקולד ורצון ליהנות!</p></div>
+
+        <div class="qa__card" role="button" tabindex="0">
+          <div class="qa__card-left">
+            <span class="qa__card-question">מאיזה גיל?</span>
+            <button class="qa__card-btn" aria-label="פתח תשובה">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5l5 5 5-5"/></svg>
+            </button>
+          </div>
+          <div class="qa__card-answer"><p>הסדנה מתאימה לכל הגילאים — ילדים ומבוגרים כאחד.</p></div>
         </div>
-        <div class="accordion__item">
-          <button class="accordion__header" aria-expanded="false">
-            <span>האם אפשר להזמין לאירוע פרטי/חברה?</span>
-            <svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg>
-          </button>
-          <div class="accordion__body"><p>בהחלט! הסדנה מתאימה לאירועים פרטיים, ימי גיבוש, ימי הולדת ואירועי חברה.</p></div>
+
+        <div class="qa__card" role="button" tabindex="0">
+          <div class="qa__card-left">
+            <span class="qa__card-question">מה המחיר כולל?</span>
+            <button class="qa__card-btn" aria-label="פתח תשובה">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5l5 5 5-5"/></svg>
+            </button>
+          </div>
+          <div class="qa__card-answer"><p>המחיר כולל את כל חומרי הגלם, הציוד, ההדרכה, וכמובן — את השוקולדים שתכינו לקחת הביתה.</p></div>
         </div>
-        <div class="accordion__item">
-          <button class="accordion__header" aria-expanded="false">
-            <span>מה המחיר כולל?</span>
-            <svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg>
-          </button>
-          <div class="accordion__body"><p>המחיר כולל את כל חומרי הגלם, הציוד, ההדרכה, וכמובן — את השוקולדים שתכינו לקחת הביתה.</p></div>
+
+        <div class="qa__card" role="button" tabindex="0">
+          <div class="qa__card-left">
+            <span class="qa__card-question">האם אפשר להזמין לאירוע חברה?</span>
+            <button class="qa__card-btn" aria-label="פתח תשובה">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5l5 5 5-5"/></svg>
+            </button>
+          </div>
+          <div class="qa__card-answer"><p>בהחלט! הסדנה מתאימה לאירועים פרטיים, ימי גיבוש, ימי הולדת ואירועי חברה.</p></div>
+        </div>
+
+        <div class="qa__card" role="button" tabindex="0">
+          <div class="qa__card-left">
+            <span class="qa__card-question">מה צריך להביא?</span>
+            <button class="qa__card-btn" aria-label="פתח תשובה">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5l5 5 5-5"/></svg>
+            </button>
+          </div>
+          <div class="qa__card-answer"><p>את עצמכם, חיוך ואווירה טובה.</p></div>
         </div>
       </div>
     </div>
@@ -315,7 +345,7 @@
 
       <!-- Left: message area + chocolate bar CTA -->
       <div class="contact__form-block">
-        <p class="contact__form-hint">כתבו הודעה ולחצו על השוקולד</p>
+        <label for="contact-message" class="contact__form-hint">כתבו הודעה ולחצו על השוקולד</label>
         <textarea id="contact-message" class="contact__textarea" rows="4" placeholder="כתבו לנו הודעה ונחזור אליכם בהקדם..."></textarea>
         <!-- Chocolate bar is the CTA -->
         <button class="contact__choc-btn" onclick="sendWhatsApp()" aria-label="שלחו הודעה בוואטסאפ">
@@ -330,9 +360,14 @@
     </div>
   </section>
 
+  </main>
+
   <!-- FOOTER -->
   <footer class="footer">
     <div class="container">
+      <p>שוקולדות | אירית שמעוני &bull; ח.פ. XXXXXXXXX &bull; ישראל</p>
+      <p>טלפון: <a href="tel:0528225999">052-822-5999</a> &bull; <a href="mailto:iritshimoni@gmail.com">iritshimoni@gmail.com</a></p>
+      <p><a href="accessibility.html">הצהרת נגישות</a></p>
       <p>&copy; 2026 שוקולדות | אירית שמעוני. כל הזכויות שמורות.</p>
     </div>
   </footer>
@@ -345,7 +380,7 @@
     </div>
   </div>
 
-  <script src="js/main.js?v=23"></script>
+  <script src="js/main.js?v=101"></script>
   <script>
     function sendWhatsApp() {
       var msg = document.getElementById('contact-message').value.trim();

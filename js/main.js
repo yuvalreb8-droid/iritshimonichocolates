@@ -36,36 +36,47 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── Navbar show/hide on scroll ── */
-  let lastScrollY = window.scrollY;
+  /* ── Navbar: scroll input → smooth render ── */
+  const navbarHeight = navbar.offsetHeight + 2;
+  const FACTOR = 0.4;
+  const LERP = 0.1;
+  let previousScrollY = window.scrollY;
+  let targetOffsetY = -navbarHeight;
+  let currentOffsetY = -navbarHeight;
+
+  navbar.style.transform = `translateY(${currentOffsetY}px)`;
+
+  // INPUT: scroll events only update the target
   window.addEventListener('scroll', () => {
     const currentScrollY = window.scrollY;
-    navbar.classList.remove('navbar--initial');
+    const deltaY = currentScrollY - previousScrollY;
+    previousScrollY = currentScrollY;
 
-    if (currentScrollY > lastScrollY) {
-      // Scrolling down — show navbar
-      navbar.classList.remove('navbar--hidden');
-    } else {
-      // Scrolling up — hide navbar
-      navbar.classList.add('navbar--hidden');
-    }
-    lastScrollY = currentScrollY;
+    targetOffsetY += deltaY * FACTOR;
+    targetOffsetY = Math.max(-navbarHeight, Math.min(0, targetOffsetY));
   });
 
-  /* ── Accordion ── */
-  document.querySelectorAll('.accordion__header').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const item = btn.parentElement;
-      const isOpen = item.classList.contains('active');
+  // RENDER: RAF smoothly interpolates toward target
+  function renderNavbar() {
+    currentOffsetY += (targetOffsetY - currentOffsetY) * LERP;
+    navbar.style.transform = `translateY(${currentOffsetY}px)`;
+    requestAnimationFrame(renderNavbar);
+  }
+  requestAnimationFrame(renderNavbar);
 
-      // Close all
-      document.querySelectorAll('.accordion__item').forEach(i => i.classList.remove('active'));
-      document.querySelectorAll('.accordion__header').forEach(b => b.setAttribute('aria-expanded', 'false'));
+  /* ── Q&A Cards ── */
+  function toggleCard(card) {
+    const wasActive = card.classList.contains('active');
+    document.querySelectorAll('.qa__card.active').forEach(c => c.classList.remove('active'));
+    if (!wasActive) card.classList.add('active');
+  }
 
-      // Open clicked (if it was closed)
-      if (!isOpen) {
-        item.classList.add('active');
-        btn.setAttribute('aria-expanded', 'true');
+  document.querySelectorAll('.qa__card').forEach(card => {
+    card.addEventListener('click', () => toggleCard(card));
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleCard(card);
       }
     });
   });
