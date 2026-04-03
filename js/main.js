@@ -96,6 +96,11 @@ document.addEventListener('DOMContentLoaded', () => {
     targetOffset = window.scrollY * SPEED;
   });
 
+  const heroSection = document.getElementById('hero');
+  const workshopSection = document.getElementById('workshop');
+  const wave1Div = document.getElementById('wave1');
+  const wave2Div = document.getElementById('wave2');
+
   function buildWave(phase) {
     const pts = 120;
     let d = '';
@@ -107,26 +112,102 @@ document.addEventListener('DOMContentLoaded', () => {
     return d;
   }
 
+  function buildClipPoints(phase) {
+    const pts = 120;
+    const points = [];
+    for (let i = 0; i <= pts; i++) {
+      const xPct = (i / pts) * 100;
+      const y = BASE_Y + Math.sin(((i / pts) * VW / VW) * Math.PI * 2 * FREQ + phase) * AMP;
+      const yPct = (y / VH) * 100;
+      points.push({ xPct, yPct });
+    }
+    return points;
+  }
+
   function animateWaves() {
     currentOffset += (targetOffset - currentOffset) * 0.06;
     const phase = currentOffset * 0.01;
     const wave = buildWave(phase);
+    const clipPoints = buildClipPoints(phase);
 
-    // Section dividers
+    // Section dividers — stroke + fill for non-wave1 dividers
     document.querySelectorAll('.wave-divider').forEach(divider => {
       const wavePath = divider.querySelector('.wavePath');
       const fillPath = divider.querySelector('.fillPath');
       if (wavePath) wavePath.setAttribute('d', wave);
-      if (fillPath) {
-        if (divider.id === 'wave1') {
-          // Fill ABOVE the curve (hero brown shows above wave)
-          fillPath.setAttribute('d', wave + ` L ${VW},0 L 0,0 Z`);
-        } else {
-          // Fill BELOW the curve (default)
-          fillPath.setAttribute('d', wave + ` L ${VW},${VH * 2} L 0,${VH * 2} Z`);
-        }
+      if (fillPath && divider.id === 'wave2') {
+        fillPath.setAttribute('d', wave + ` L ${VW},${VH} L 0,${VH} Z`);
+      } else if (fillPath && divider.id !== 'wave1') {
+        fillPath.setAttribute('d', wave + ` L ${VW},${VH * 2} L 0,${VH * 2} Z`);
       }
     });
+
+    // Wave1 clip-path: clip hero bottom and workshop top to the wave curve
+    if (wave1Div && heroSection && workshopSection) {
+      const waveRect = wave1Div.getBoundingClientRect();
+      const heroRect = heroSection.getBoundingClientRect();
+      const workshopRect = workshopSection.getBoundingClientRect();
+
+      // Hero clip: everything visible, bottom edge follows wave curve
+      // Convert wave points from wave-div-local to hero-local percentages
+      let heroClip = '0% 0%, 100% 0%, '; // top-left, top-right
+      // Right edge down to wave start
+      for (let i = clipPoints.length - 1; i >= 0; i--) {
+        const xPct = clipPoints[i].xPct;
+        // Wave y in wave-div local pixels
+        const waveYLocal = (clipPoints[i].yPct / 100) * waveRect.height;
+        // Position relative to hero: waveRect.top - heroRect.top + waveYLocal
+        const yInHero = (waveRect.top - heroRect.top) + waveYLocal;
+        const yPct = (yInHero / heroRect.height) * 100;
+        heroClip += `${xPct}% ${yPct}%`;
+        if (i > 0) heroClip += ', ';
+      }
+      heroSection.style.clipPath = `polygon(${heroClip})`;
+
+      // Workshop clip: top edge from wave1, bottom edge from wave2
+      // Top edge: follows wave1 curve (left to right)
+      let workshopClip = '';
+      for (let i = 0; i < clipPoints.length; i++) {
+        const xPct = clipPoints[i].xPct;
+        const waveYLocal = (clipPoints[i].yPct / 100) * waveRect.height;
+        const yInWorkshop = (waveRect.top - workshopRect.top) + waveYLocal;
+        const yPct = (yInWorkshop / workshopRect.height) * 100;
+        workshopClip += `${xPct}% ${yPct}%, `;
+      }
+
+      // Bottom edge: follows wave2 curve (right to left)
+      if (wave2Div) {
+        const wave2Rect = wave2Div.getBoundingClientRect();
+        for (let i = clipPoints.length - 1; i >= 0; i--) {
+          const xPct = clipPoints[i].xPct;
+          const waveYLocal = (clipPoints[i].yPct / 100) * wave2Rect.height;
+          const yInWorkshop = (wave2Rect.top - workshopRect.top) + waveYLocal;
+          const yPct = (yInWorkshop / workshopRect.height) * 100;
+          workshopClip += `${xPct}% ${yPct}%`;
+          if (i > 0) workshopClip += ', ';
+        }
+      } else {
+        workshopClip += '100% 100%, 0% 100%';
+      }
+
+      workshopSection.style.clipPath = `polygon(${workshopClip})`;
+    }
+
+    // Wave2: also clip workshop bottom independently (in case wave1 block didn't run)
+    if (wave2Div && workshopSection && !wave1Div) {
+      const wave2Rect = wave2Div.getBoundingClientRect();
+      const wsRect = workshopSection.getBoundingClientRect();
+      let wsClip = '0% 0%, 100% 0%, ';
+      for (let i = clipPoints.length - 1; i >= 0; i--) {
+        const xPct = clipPoints[i].xPct;
+        const waveYLocal = (clipPoints[i].yPct / 100) * wave2Rect.height;
+        const yInWs = (wave2Rect.top - wsRect.top) + waveYLocal;
+        const yPct = (yInWs / wsRect.height) * 100;
+        wsClip += `${xPct}% ${yPct}%`;
+        if (i > 0) wsClip += ', ';
+      }
+      workshopSection.style.clipPath = `polygon(${wsClip})`;
+    }
 
     requestAnimationFrame(animateWaves);
   }
