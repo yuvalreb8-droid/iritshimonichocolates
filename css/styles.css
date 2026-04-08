@@ -17,7 +17,7 @@ body {
   direction: rtl;
   color: #662502;
   overflow-x: hidden;
-  background: #ffffff;
+  background: #662502;
 }
 
 a {
@@ -1157,21 +1157,29 @@ p, h1, h2, h3, h4, li {
 
   .navbar__toggle {
     display: flex;
+    margin-inline-start: 2rem;
+    align-self: center;
+  }
+
+  .navbar__logo {
+    margin-inline-end: 2rem;
+    align-self: center;
   }
 
   /* ── Hero ── */
   .hero {
     overflow: hidden;
-    padding-bottom: 60px;
+    padding-bottom: 150px;
   }
 
   .hero__content {
     flex-direction: column-reverse;
     text-align: center;
     padding: clamp(1rem, 4vw, 2rem) clamp(0.75rem, 3vw, 1.5rem);
-    gap: clamp(1rem, 4vw, 2rem);
+    gap: clamp(1.5rem, 5vw, 3rem);
     height: auto;
-    min-height: 0;
+    min-height: calc(100svh - 4rem - 150px);
+    justify-content: center;
   }
 
   .hero__text {
@@ -1179,8 +1187,18 @@ p, h1, h2, h3, h4, li {
     text-align: center;
   }
 
+  .hero__title {
+    font-size: clamp(2.8rem, 13vw, 3.5rem);
+  }
+
   .hero__hi {
+    font-size: clamp(1.7rem, 7.8vw, 2.1rem);
     justify-content: center;
+  }
+
+  .hero__subtitle-line1,
+  .hero__subtitle-line2 {
+    font-size: clamp(1.1rem, 5vw, 1.4rem);
   }
 
   .hero__blob-circle {
@@ -1209,7 +1227,9 @@ p, h1, h2, h3, h4, li {
   .hero__praline--8 { top: 3%; right: 2%; opacity: 0.7; }
 
   .hero__scroll-hint {
-    bottom: 2rem;
+    bottom: clamp(6rem, 18vw, 10rem);
+    width: 38px;
+    height: 38px;
   }
 
   /* ── Wave Dividers ── */
@@ -1341,7 +1361,7 @@ p, h1, h2, h3, h4, li {
   .contact__icons {
     justify-content: center;
     gap: 1rem;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
 
   .contact__icon-img {
@@ -1355,7 +1375,7 @@ p, h1, h2, h3, h4, li {
 
   /* ── Footer ── */
   .footer {
-    padding: 2rem 0 calc(7rem + env(safe-area-inset-bottom));
+    padding: 2rem 0 calc(12rem + env(safe-area-inset-bottom));
   }
 }
 
