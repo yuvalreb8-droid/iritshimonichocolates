@@ -17,7 +17,7 @@ body {
   direction: rtl;
   color: #662502;
   overflow-x: hidden;
-  background: #662502;
+  background: #ffffff;
 }
 
 a {
@@ -914,18 +914,21 @@ p, h1, h2, h3, h4, li {
   z-index: 10;
   background: inherit;
   border-radius: 0 0 18px 18px;
-  padding: 0.8rem 1.5rem 1.2rem;
+  padding: 0 1.5rem;
+  max-height: 0;
   border-top: 2px solid rgba(59, 26, 8, 0.15);
   opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.35s ease, visibility 0s linear 0.35s;
+  overflow: hidden;
+  transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.35s ease,
+              padding 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .qa__card.active .qa__card-answer {
   opacity: 1;
-  visibility: visible;
+  max-height: 300px;
+  padding: 0.8rem 1.5rem 1.2rem;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  transition: opacity 0.35s ease, visibility 0s linear 0s;
 }
 
 .qa__card-answer p {
@@ -1137,6 +1140,42 @@ p, h1, h2, h3, h4, li {
    ══════════════════════════════════════ */
 @media (max-width: 768px) {
 
+  body {
+    background: #e5cfa8;
+  }
+
+  .navbar {
+    transition: transform 0.52s ease;
+  }
+
+  .navbar__marquee {
+    padding: 0.24rem 0;
+  }
+
+  .navbar__marquee-inner span {
+    font-size: 0.6rem;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100vh;
+    left: 0;
+    right: 0;
+    height: 100vh;
+    background: #662502;
+    z-index: -1;
+  }
+
+  .qa {
+    padding-bottom: 8rem;
+  }
+
+  .footer {
+    padding: 1.4rem 0 calc(1rem + env(safe-area-inset-bottom));
+    line-height: 1.4;
+  }
+
   /* ── Navbar ── */
   .navbar__links {
     display: none;
@@ -1157,13 +1196,18 @@ p, h1, h2, h3, h4, li {
 
   .navbar__toggle {
     display: flex;
+    align-items: center;
+    justify-content: center;
     margin-inline-start: 2rem;
-    align-self: center;
+  }
+
+  .navbar__inner {
+    padding: 0.6rem 2rem;
   }
 
   .navbar__logo {
     margin-inline-end: 2rem;
-    align-self: center;
+    font-size: 2rem;
   }
 
   /* ── Hero ── */
@@ -1202,8 +1246,8 @@ p, h1, h2, h3, h4, li {
   }
 
   .hero__blob-circle {
-    width: clamp(130px, 50vw, 240px);
-    height: clamp(130px, 50vw, 240px);
+    width: clamp(163px, 62.5vw, 300px);
+    height: clamp(163px, 62.5vw, 300px);
   }
 
   .hero__band {
@@ -1375,7 +1419,7 @@ p, h1, h2, h3, h4, li {
 
   /* ── Footer ── */
   .footer {
-    padding: 2rem 0 calc(12rem + env(safe-area-inset-bottom));
+    padding: 1.4rem 0 calc(1.4rem + env(safe-area-inset-bottom));
   }
 }
 

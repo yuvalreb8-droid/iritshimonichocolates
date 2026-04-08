@@ -36,33 +36,85 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── Navbar: scroll input → smooth render ── */
-  const navbarHeight = navbar.offsetHeight + 2;
-  const FACTOR = 0.4;
-  const LERP = 0.1;
-  let previousScrollY = window.scrollY;
-  let targetOffsetY = -navbarHeight;
-  let currentOffsetY = -navbarHeight;
+  /* ── Navbar: touch-linked 1:1 hide/show ── */
+  const navbarHeight = navbar.offsetHeight + 10;
+  const maxOffset = navbarHeight * 1.1;
+  let navOffset = maxOffset;
+  let lastTouchY = 0;
+  let isTouching = false;
 
-  navbar.style.transform = `translateY(${currentOffsetY}px)`;
+  navbar.style.transform = `translateY(-${maxOffset}px)`;
 
-  // INPUT: scroll events only update the target
-  window.addEventListener('scroll', () => {
-    const currentScrollY = window.scrollY;
-    const deltaY = currentScrollY - previousScrollY;
-    previousScrollY = currentScrollY;
-
-    targetOffsetY += deltaY * FACTOR;
-    targetOffsetY = Math.max(-navbarHeight, Math.min(0, targetOffsetY));
+  window.addEventListener('touchstart', (e) => {
+    if (!e.touches.length) return;
+    lastTouchY = e.touches[0].clientY;
+    isTouching = true;
+    // Force disable transition during drag
+    navbar.style.setProperty('transition', 'none', 'important');
   }, { passive: true });
 
-  // RENDER: RAF smoothly interpolates toward target
-  function renderNavbar() {
-    currentOffsetY += (targetOffsetY - currentOffsetY) * LERP;
-    navbar.style.transform = `translateY(${currentOffsetY}px)`;
-    requestAnimationFrame(renderNavbar);
+  window.addEventListener('touchmove', (e) => {
+    if (!isTouching || !e.touches.length) return;
+    const touchY = e.touches[0].clientY;
+    const delta = lastTouchY - touchY;
+    lastTouchY = touchY;
+
+    // Hide at top of page
+    if (window.scrollY <= 5) {
+      navOffset = maxOffset;
+      navbar.style.transform = `translateY(-${maxOffset}px)`;
+      return;
+    }
+
+    navOffset = Math.max(0, Math.min(maxOffset, navOffset + delta));
+    navbar.style.transform = `translateY(-${navOffset}px)`;
+  }, { passive: true });
+
+  window.addEventListener('touchend', () => {
+    isTouching = false;
+    // Re-enable transition for snap
+    navbar.style.removeProperty('transition');
+
+    if (navOffset > maxOffset * 0.5) {
+      navbar.style.transition = 'transform 0.52s ease';
+      navOffset = maxOffset;
+    } else {
+      navbar.style.transition = 'transform 0.33s ease';
+      navOffset = 0;
+    }
+    navbar.style.transform = `translateY(-${navOffset}px)`;
+  }, { passive: true });
+
+  // Desktop scroll — lerp-based fluid follow
+  const DESKTOP_FACTOR = 0.25;
+  const DESKTOP_LERP = 0.08;
+  let deskLastScrollY = window.scrollY;
+  let deskTarget = -navbarHeight;
+  let deskCurrent = -navbarHeight;
+
+  window.addEventListener('scroll', () => {
+    if (isTouching) return;
+    const currentScrollY = window.scrollY;
+    const delta = currentScrollY - deskLastScrollY;
+    deskLastScrollY = currentScrollY;
+
+    if (currentScrollY < 10) {
+      deskTarget = -navbarHeight;
+    } else {
+      deskTarget += delta * DESKTOP_FACTOR;
+      deskTarget = Math.max(-navbarHeight, Math.min(0, deskTarget));
+    }
+  }, { passive: true });
+
+  function renderDesktopNavbar() {
+    if (!isTouching) {
+      deskCurrent += (deskTarget - deskCurrent) * DESKTOP_LERP;
+      if (Math.abs(deskCurrent - deskTarget) < 0.5) deskCurrent = deskTarget;
+      navbar.style.transform = `translateY(${deskCurrent}px)`;
+    }
+    requestAnimationFrame(renderDesktopNavbar);
   }
-  requestAnimationFrame(renderNavbar);
+  requestAnimationFrame(renderDesktopNavbar);
 
   /* ── Q&A Cards ── */
   function toggleCard(card) {
