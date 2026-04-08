@@ -10,8 +10,8 @@
   <meta name="description" content="סדנאות שוקולד מיוחדות לאירועים פרטיים וחברות. חוויה ייחודית של יצירה וטעם עם אירית שמעוני.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&family=Rubik:wght@700;800;900&family=Secular+One&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=118">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;900&family=Rubik:wght@900&family=Secular+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css?v=202">
 </head>
 <body>
 
@@ -55,7 +55,7 @@
       <div class="hero__text">
         <h1 class="hero__title">שוקולדות</h1>
         <p class="hero__hi">סדנאות מתוקות</p>
-        <p class="hero__subtitle-line1">אני מזמינה אתכם לסדנאת שוקולד חוויתית שמשלבת יצירה, למידה והמון טעימות</p>
+        <p class="hero__subtitle-line1">אני מזמינה אתכם ל<strong class="hero__subtitle-emphasis">סדנת שוקולד חוויתית</strong> שמשלבת יצירה, למידה והמון טעימות</p>
         <p class="hero__subtitle-line2">אני אירית ואני מנחת סדנאות שוקולד כבר מעל ל15 שנה</p>
       </div>
 
@@ -63,7 +63,7 @@
       <div class="hero__image">
         <div class="hero__blob-circle">
           <!-- Placeholder for Irit's photo — replace src later -->
-          <img src="images/irit-placeholder.jpg" alt="אירית שמעוני" onerror="this.style.display='none'">
+          <img src="images/irit-placeholder.webp" alt="אירית שמעוני" width="900" height="1600" fetchpriority="high" onerror="this.style.display='none'">
           <div class="hero__blob-placeholder">תמונה תתווסף בקרוב</div>
         </div>
       </div>
@@ -71,24 +71,37 @@
 
     <!-- Main pralines (3 original placements) -->
     <div class="hero__praline hero__praline--1" aria-hidden="true">
-      <img src="images/pralines/praline 1.png" alt="">
+      <img src="images/pralines/praline 1.webp" alt="" width="1024" height="1024">
     </div>
     <div class="hero__praline hero__praline--2" aria-hidden="true">
-      <img src="images/pralines/praline 2.png" alt="">
+      <img src="images/pralines/praline 2.webp" alt="" width="1024" height="1024">
     </div>
     <div class="hero__praline hero__praline--3" aria-hidden="true">
-      <img src="images/pralines/praline 3.png" alt="">
+      <img src="images/pralines/praline 3.webp" alt="" width="1024" height="1024">
     </div>
 
     <!-- Extra smaller pralines scattered -->
     <div class="hero__praline hero__praline--4 hero__praline--small" aria-hidden="true">
-      <img src="images/pralines/praline 5.png" alt="">
+      <img src="images/pralines/praline 5.webp" alt="" width="1024" height="1024">
     </div>
     <div class="hero__praline hero__praline--5 hero__praline--small" aria-hidden="true">
-      <img src="images/pralines/praline 8.png" alt="">
+      <img src="images/pralines/praline 8.webp" alt="" width="1024" height="1024">
     </div>
     <div class="hero__praline hero__praline--6 hero__praline--small" aria-hidden="true">
-      <img src="images/pralines/praline 12.png" alt="">
+      <img src="images/pralines/praline 12.webp" alt="" width="1024" height="1024">
+    </div>
+    <div class="hero__praline hero__praline--7 hero__praline--small" aria-hidden="true">
+      <img src="images/pralines/praline 10.webp" alt="" width="1024" height="1024">
+    </div>
+    <div class="hero__praline hero__praline--8 hero__praline--small" aria-hidden="true">
+      <img src="images/pralines/praline 14.webp" alt="" width="1024" height="1024">
+    </div>
+
+    <!-- Scroll hint (animated chevron) -->
+    <div class="hero__scroll-hint" aria-hidden="true">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 9l6 6 6-6" fill="none" stroke="#e5cfa8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </div>
 
   </section>
@@ -96,7 +109,7 @@
   <!-- WAVE DIVIDER: Hero → Workshop -->
   <div class="wave-divider" id="wave1">
     <svg class="wave-svg" viewBox="0 0 1440 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <path class="fillPath" fill="#f5ede0" stroke="none" />
+      <path class="fillPath" fill="none" stroke="none" />
       <path class="wavePath" fill="none" stroke="#ff7200" stroke-width="2.5" />
     </svg>
   </div>
@@ -137,12 +150,12 @@
       <div class="workshop__block workshop__block--gallery workshop__block--upper-left">
         <div class="gallery__stack" id="workshop-carousel">
           <div class="gallery__back-img">
-            <img class="img-layer img-layer--a" src="images/people%20at%20workshop/people%20at%20workshop%202.png" alt="">
-            <img class="img-layer img-layer--b" src="" alt="">
+            <img class="img-layer img-layer--a" src="images/people%20at%20workshop/people%20at%20workshop%202.webp" alt="" width="880" height="1168" loading="lazy">
+            <img class="img-layer img-layer--b" src="" alt="" width="880" height="1168" loading="lazy">
           </div>
           <div class="gallery__front-img">
-            <img class="img-layer img-layer--a" src="images/people%20at%20workshop/people%20at%20workshop%201.png" alt="תמונות מהסדנאות">
-            <img class="img-layer img-layer--b" src="" alt="">
+            <img class="img-layer img-layer--a" src="images/people%20at%20workshop/people%20at%20workshop%201.webp" alt="תמונות מהסדנאות" width="880" height="1168" loading="lazy">
+            <img class="img-layer img-layer--b" src="" alt="" width="880" height="1168" loading="lazy">
           </div>
         </div>
       </div>
@@ -151,12 +164,12 @@
       <div class="workshop__block workshop__block--gallery workshop__block--lower-left">
         <div class="gallery__stack" id="results-carousel">
           <div class="gallery__back-img">
-            <img class="img-layer img-layer--a" src="images/chocolate%20pictures/chocolate%20picture%202.png" alt="">
-            <img class="img-layer img-layer--b" src="" alt="">
+            <img class="img-layer img-layer--a" src="images/chocolate%20pictures/chocolate%20picture%202.webp" alt="" width="1168" height="880" loading="lazy">
+            <img class="img-layer img-layer--b" src="" alt="" width="1168" height="880" loading="lazy">
           </div>
           <div class="gallery__front-img">
-            <img class="img-layer img-layer--a" src="images/chocolate%20pictures/chocolate%20picture%201.png" alt="תוצאות מסדנאות">
-            <img class="img-layer img-layer--b" src="" alt="">
+            <img class="img-layer img-layer--a" src="images/chocolate%20pictures/chocolate%20picture%201.webp" alt="תוצאות מסדנאות" width="880" height="1168" loading="lazy">
+            <img class="img-layer img-layer--b" src="" alt="" width="880" height="1168" loading="lazy">
           </div>
         </div>
       </div>
@@ -288,7 +301,7 @@
   <!-- WAVE DIVIDER: Q&A → Contact -->
   <div class="wave-divider" id="wave3">
     <svg class="wave-svg" viewBox="0 0 1440 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <path class="fillPath" fill="#7C3913" stroke="none" />
+      <path class="fillPath" fill="#e5cfa8" stroke="none" />
       <path class="wavePath" fill="none" stroke="#ff7200" stroke-width="2.5" />
     </svg>
   </div>
@@ -298,65 +311,31 @@
        ══════════════════════════════════════ -->
   <section id="contact" class="contact">
     <div class="contact__inner">
+      <div class="contact__row">
+        <!-- Text (right side in RTL) -->
+        <div class="contact__text">
+          <h2 class="contact__title">צרו קשר</h2>
+          <p class="contact__subtitle">לשאלות על הסדנאות, התאמה לאירועים<br>ותיאום מועד השאירו פרטים או צרו קשר</p>
+        </div>
 
-      <!-- Right: title + contact details -->
-      <div class="contact__details">
-        <h2 class="contact__title">צרו קשר</h2>
-        <p class="contact__subtitle">שמחה לשמוע מכם — כתבו הודעה ואחזור אליכם בהקדם</p>
-
-        <div class="contact__info-list">
-          <a href="https://wa.me/972528225999" target="_blank" class="contact__info-item contact__info-item--wa">
-            <span class="contact__info-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" width="26" height="26">
-                <path d="M16 2C8.268 2 2 8.268 2 16c0 2.494.648 4.838 1.782 6.872L2 30l7.34-1.762A13.94 13.94 0 0 0 16 30c7.732 0 14-6.268 14-14S23.732 2 16 2Zm0 25.6a11.56 11.56 0 0 1-5.9-1.61l-.424-.252-4.356 1.046 1.066-4.244-.276-.436A11.56 11.56 0 0 1 4.4 16C4.4 9.592 9.592 4.4 16 4.4S27.6 9.592 27.6 16 22.408 27.6 16 27.6Zm6.34-8.68c-.348-.174-2.058-1.016-2.378-1.132-.32-.116-.552-.174-.784.174-.232.348-.9 1.132-1.102 1.364-.202.232-.404.26-.752.086-.348-.174-1.47-.542-2.8-1.728-1.034-.924-1.732-2.064-1.934-2.412-.202-.348-.022-.536.152-.71.156-.154.348-.404.522-.606.174-.202.232-.348.348-.58.116-.232.058-.436-.028-.61-.086-.174-.784-1.89-1.074-2.59-.284-.68-.572-.588-.784-.598l-.668-.012c-.232 0-.61.086-.928.434-.32.348-1.218 1.19-1.218 2.904s1.248 3.368 1.422 3.6c.174.232 2.454 3.748 5.946 5.252.832.358 1.48.572 1.986.732.834.266 1.594.228 2.194.138.67-.1 2.058-.842 2.348-1.656.29-.814.29-1.512.204-1.656-.086-.144-.32-.232-.668-.406Z"/>
-              </svg>
-            </span>
-            <span class="contact__info-text">
-              <span class="contact__info-label">וואטסאפ</span>
-              <span class="contact__info-value" dir="ltr">052-822-5999</span>
-            </span>
+        <!-- Icons on one line (left side in RTL) -->
+        <div class="contact__icons">
+          <a href="https://wa.me/972528225999" target="_blank" rel="noopener" class="contact__icon-link" aria-label="צרו קשר בוואטסאפ">
+            <img src="images/whatsappicon.webp" alt="שוקולד וואטסאפ – לחצו לשליחת הודעה" class="contact__icon-img" width="256" height="256" loading="lazy">
+            <span class="contact__icon-label">וואטסאפ</span>
           </a>
 
-          <a href="tel:0528225999" class="contact__info-item">
-            <span class="contact__info-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" width="24" height="24">
-                <path d="M26.1 20.5c-1.4-1.4-3.1-1.4-4.5 0l-1.3 1.3c-.1-.1-2.7-1.6-5.3-4.2-2.6-2.6-4.1-5.2-4.2-5.3l1.3-1.3c1.4-1.4 1.4-3.1 0-4.5L9.6 3.9C8.2 2.5 6.5 2.5 5.1 3.9L3.5 5.5C2.7 6.3 2.3 7.3 2.3 8.5c0 3.5 2 7.9 5.5 11.4s7.9 5.5 11.4 5.5c1.2 0 2.2-.4 3-1.2l1.6-1.6c1.4-1.4 1.4-3.1.3-4.1Z"/>
-              </svg>
-            </span>
-            <span class="contact__info-text">
-              <span class="contact__info-label">טלפון</span>
-              <span class="contact__info-value" dir="ltr">052-822-5999</span>
-            </span>
+          <a href="tel:0528225999" class="contact__icon-link" aria-label="התקשרו אלינו">
+            <img src="images/phoneicon.webp" alt="שוקולד טלפון – לחצו להתקשר" class="contact__icon-img" width="256" height="256" loading="lazy">
+            <span class="contact__icon-label">טלפון</span>
           </a>
 
-          <a href="mailto:iritshimoni@gmail.com" class="contact__info-item">
-            <span class="contact__info-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" width="24" height="24">
-                <path d="M28 6H4a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h24a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2Zm-2.2 2L16 14.8 6.2 8h19.6ZM4 24V9.9l11.4 8a1 1 0 0 0 1.2 0L28 9.9V24H4Z"/>
-              </svg>
-            </span>
-            <span class="contact__info-text">
-              <span class="contact__info-label">אימייל</span>
-              <span class="contact__info-value" dir="ltr">iritshimoni@gmail.com</span>
-            </span>
+          <a href="mailto:irittravel11@gmail.com" class="contact__icon-link" aria-label="שלחו אימייל">
+            <img src="images/emailicon.webp" alt="שוקולד אימייל – לחצו לשליחת מייל" class="contact__icon-img" width="256" height="256" loading="lazy">
+            <span class="contact__icon-label">אימייל</span>
           </a>
         </div>
       </div>
-
-      <!-- Left: message area + chocolate bar CTA -->
-      <div class="contact__form-block">
-        <label for="contact-message" class="contact__form-hint">כתבו הודעה ולחצו על השוקולד</label>
-        <textarea id="contact-message" class="contact__textarea" rows="4" placeholder="כתבו לנו הודעה ונחזור אליכם בהקדם..."></textarea>
-        <!-- Chocolate bar is the CTA -->
-        <button class="contact__choc-btn" onclick="sendWhatsApp()" aria-label="שלחו הודעה בוואטסאפ">
-          <span class="contact__choc-img-wrap">
-            <img src="images/contact%20.png" alt="" class="contact__choc-img">
-          </span>
-          <span class="contact__choc-overlay"></span>
-          <span class="contact__choc-label">שלחו הודעה</span>
-        </button>
-      </div>
-
     </div>
   </section>
 
@@ -380,14 +359,6 @@
     </div>
   </div>
 
-  <script src="js/main.js?v=101"></script>
-  <script>
-    function sendWhatsApp() {
-      var msg = document.getElementById('contact-message').value.trim();
-      var phone = '972528225999';
-      var url = 'https://wa.me/' + phone + (msg ? '?text=' + encodeURIComponent(msg) : '');
-      window.open(url, '_blank');
-    }
-  </script>
+  <script src="js/main.js?v=112"></script>
 </body>
 </html>

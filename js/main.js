@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     targetOffsetY += deltaY * FACTOR;
     targetOffsetY = Math.max(-navbarHeight, Math.min(0, targetOffsetY));
-  });
+  }, { passive: true });
 
   // RENDER: RAF smoothly interpolates toward target
   function renderNavbar() {
@@ -94,7 +94,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('scroll', () => {
     targetOffset = window.scrollY * SPEED;
-  });
+  }, { passive: true });
+
+  const heroSection = document.getElementById('hero');
+  const workshopSection = document.getElementById('workshop');
+  const wave1Div = document.getElementById('wave1');
+  const wave2Div = document.getElementById('wave2');
 
   function buildWave(phase) {
     const pts = 120;
@@ -107,23 +112,129 @@ document.addEventListener('DOMContentLoaded', () => {
     return d;
   }
 
+  function buildClipPoints(phase) {
+    const pts = 120;
+    const points = [];
+    for (let i = 0; i <= pts; i++) {
+      const xPct = (i / pts) * 100;
+      const y = BASE_Y + Math.sin(((i / pts) * VW / VW) * Math.PI * 2 * FREQ + phase) * AMP;
+      const yPct = (y / VH) * 100;
+      points.push({ xPct, yPct });
+    }
+    return points;
+  }
+
+  let frameSkip = 0;
   function animateWaves() {
-    currentOffset += (targetOffset - currentOffset) * 0.06;
+    // Throttle to 30fps (skip every other frame) for performance
+    frameSkip = (frameSkip + 1) % 2;
+    if (frameSkip === 1) {
+      if (wavesActive) requestAnimationFrame(animateWaves);
+      else animationRunning = false;
+      return;
+    }
+
+    currentOffset += (targetOffset - currentOffset) * 0.12; // doubled lerp to compensate for 30fps
     const phase = currentOffset * 0.01;
     const wave = buildWave(phase);
+    const clipPoints = buildClipPoints(phase);
 
-    // Section dividers
+    // Section dividers — stroke + fill for non-wave1 dividers
     document.querySelectorAll('.wave-divider').forEach(divider => {
       const wavePath = divider.querySelector('.wavePath');
       const fillPath = divider.querySelector('.fillPath');
       if (wavePath) wavePath.setAttribute('d', wave);
-      if (fillPath) fillPath.setAttribute('d', wave + ` L ${VW},${VH * 2} L 0,${VH * 2} Z`);
+      if (fillPath && divider.id === 'wave2') {
+        fillPath.setAttribute('d', wave + ` L ${VW},${VH + 20} L 0,${VH + 20} Z`);
+      } else if (fillPath && divider.id !== 'wave1') {
+        fillPath.setAttribute('d', wave + ` L ${VW},${VH * 2} L 0,${VH * 2} Z`);
+      }
     });
 
-    requestAnimationFrame(animateWaves);
+    // Wave1 clip-path: clip hero bottom and workshop top to the wave curve
+    if (wave1Div && heroSection && workshopSection) {
+      const waveRect = wave1Div.getBoundingClientRect();
+      const heroRect = heroSection.getBoundingClientRect();
+      const workshopRect = workshopSection.getBoundingClientRect();
+
+      // Hero clip: everything visible, bottom edge follows wave curve
+      // Convert wave points from wave-div-local to hero-local percentages
+      let heroClip = '0% 0%, 100% 0%, '; // top-left, top-right
+      // Right edge down to wave start
+      for (let i = clipPoints.length - 1; i >= 0; i--) {
+        const xPct = clipPoints[i].xPct;
+        // Wave y in wave-div local pixels
+        const waveYLocal = (clipPoints[i].yPct / 100) * waveRect.height;
+        // Position relative to hero: waveRect.top - heroRect.top + waveYLocal
+        const yInHero = (waveRect.top - heroRect.top) + waveYLocal;
+        const yPct = (yInHero / heroRect.height) * 100;
+        heroClip += `${xPct}% ${yPct}%`;
+        if (i > 0) heroClip += ', ';
+      }
+      heroSection.style.clipPath = `polygon(${heroClip})`;
+
+      // Workshop clip: top edge from wave1, bottom edge from wave2
+      // Top edge: follows wave1 curve (left to right)
+      let workshopClip = '';
+      for (let i = 0; i < clipPoints.length; i++) {
+        const xPct = clipPoints[i].xPct;
+        const waveYLocal = (clipPoints[i].yPct / 100) * waveRect.height;
+        const yInWorkshop = (waveRect.top - workshopRect.top) + waveYLocal;
+        const yPct = (yInWorkshop / workshopRect.height) * 100;
+        workshopClip += `${xPct}% ${yPct}%, `;
+      }
+
+      // Bottom edge: extend to full height (wave2 divider covers the transition visually)
+      workshopClip += '100% 100%, 0% 100%';
+
+      workshopSection.style.clipPath = `polygon(${workshopClip})`;
+    }
+
+    // Wave2: also clip workshop bottom independently (in case wave1 block didn't run)
+    if (wave2Div && workshopSection && !wave1Div) {
+      const wave2Rect = wave2Div.getBoundingClientRect();
+      const wsRect = workshopSection.getBoundingClientRect();
+      let wsClip = '0% 0%, 100% 0%, 100% 100%, 0% 100%';
+      workshopSection.style.clipPath = `polygon(${wsClip})`;
+    }
+
+    // Only continue if any wave/section is still visible (performance: pause off-screen)
+    if (wavesActive) {
+      requestAnimationFrame(animateWaves);
+    } else {
+      animationRunning = false;
+    }
   }
 
-  animateWaves();
+  // IntersectionObserver: only run wave animation when waves or relevant sections are visible
+  let wavesActive = false;
+  let animationRunning = false;
+  const visibleElements = new Set();
+
+  function startAnimationIfNeeded() {
+    if (!animationRunning && visibleElements.size > 0) {
+      wavesActive = true;
+      animationRunning = true;
+      requestAnimationFrame(animateWaves);
+    }
+    wavesActive = visibleElements.size > 0;
+  }
+
+  const waveObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        visibleElements.add(entry.target);
+      } else {
+        visibleElements.delete(entry.target);
+      }
+    });
+    startAnimationIfNeeded();
+  }, { rootMargin: '100px' });
+
+  // Observe wave dividers + hero + workshop (all elements that depend on the animation)
+  document.querySelectorAll('.wave-divider').forEach(el => waveObserver.observe(el));
+  if (heroSection) waveObserver.observe(heroSection);
+  if (workshopSection) waveObserver.observe(workshopSection);
 
 });
 
@@ -132,22 +243,22 @@ document.addEventListener('DOMContentLoaded', () => {
    ══════════════════════════════════════ */
 
 const WORKSHOP_IMAGES = [
-  'images/people%20at%20workshop/people%20at%20workshop%201.png',
-  'images/people%20at%20workshop/people%20at%20workshop%202.png',
-  'images/people%20at%20workshop%204.png',
-  'images/Pro%20v3%20-%20Large%20Group.png',
-  'images/people%20at%20workshop/people%20at%20workshop%203.png',
+  'images/people%20at%20workshop/people%20at%20workshop%201.webp',
+  'images/people%20at%20workshop/people%20at%20workshop%202.webp',
+  'images/people%20at%20workshop%204.webp',
+  'images/Pro%20v3%20-%20Large%20Group.webp',
+  'images/people%20at%20workshop/people%20at%20workshop%203.webp',
 ];
 
 const CHOCOLATE_IMAGES = [
-  'images/chocolate%20pictures/chocolate%20picture%201.png',
-  'images/chocolate%20pictures/chocolate%20picture%202.png',
-  'images/chocolate%20pictures/chocolate%20picture%203.png',
-  'images/chocolate%20pictures/chocolate%20picture%204.png',
-  'images/chocolate%20pictures/chocolate%20picture%205.png',
-  'images/chocolate%20pictures/chocolate%20picture%206.png',
-  'images/chocolate%20pictures/chocolate%20picture%207.png',
-  'images/chocolate%20pictures/chocolate%20picture%208.png',
+  'images/chocolate%20pictures/chocolate%20picture%201.webp',
+  'images/chocolate%20pictures/chocolate%20picture%202.webp',
+  'images/chocolate%20pictures/chocolate%20picture%203.webp',
+  'images/chocolate%20pictures/chocolate%20picture%204.webp',
+  'images/chocolate%20pictures/chocolate%20picture%205.webp',
+  'images/chocolate%20pictures/chocolate%20picture%206.webp',
+  'images/chocolate%20pictures/chocolate%20picture%207.webp',
+  'images/chocolate%20pictures/chocolate%20picture%208.webp',
 ];
 
 function preloadImages(arr) {
