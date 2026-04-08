@@ -889,6 +889,7 @@ p, h1, h2, h3, h4, li {
   border-radius: 50%;
   background: rgba(59, 26, 8, 0.12);
   border: none;
+  color: inherit;
   cursor: pointer;
   display: flex;
   align-items: center;
