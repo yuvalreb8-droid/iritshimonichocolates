@@ -36,92 +36,44 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── Navbar: touch-linked 1:1 hide/show ── */
-  const navbarHeight = navbar.offsetHeight + 10;
-  const maxOffset = navbarHeight * 1.1;
-  let navOffset = maxOffset;
-  let lastTouchY = 0;
-  let isTouching = false;
+  /* ── Navbar: production pattern (class toggle + RAF debounce) ── */
+  let lastScrollY = window.scrollY;
+  let ticking = false;
 
-  navbar.style.transform = `translateY(-${maxOffset}px)`;
+  // Start hidden
+  navbar.classList.add('is-hidden');
 
-  window.addEventListener('touchstart', (e) => {
-    if (!e.touches.length) return;
-    lastTouchY = e.touches[0].clientY;
-    isTouching = true;
-    // Force disable transition during drag
-    navbar.style.setProperty('transition', 'none', 'important');
-  }, { passive: true });
+  function updateNavbar() {
+    const currentScrollY = window.scrollY;
+    const distance = Math.abs(currentScrollY - lastScrollY);
 
-  window.addEventListener('touchmove', (e) => {
-    if (!isTouching || !e.touches.length) return;
-    const touchY = e.touches[0].clientY;
-    const delta = lastTouchY - touchY;
-    lastTouchY = touchY;
-
-    // Hide at top of page
-    if (window.scrollY <= 5) {
-      navOffset = maxOffset;
-      navbar.style.transform = `translateY(-${maxOffset}px)`;
+    // Ignore tiny movements (finger jitter)
+    if (distance < 5) {
+      ticking = false;
       return;
     }
 
-    navOffset = Math.max(0, Math.min(maxOffset, navOffset + delta));
-    navbar.style.transform = `translateY(-${navOffset}px)`;
-  }, { passive: true });
-
-  window.addEventListener('touchend', () => {
-    isTouching = false;
-    // Re-enable transition for snap
-    navbar.style.removeProperty('transition');
-
-    if (navOffset > maxOffset * 0.5) {
-      navbar.style.transition = 'transform 0.52s ease';
-      navOffset = maxOffset;
+    if (currentScrollY <= 5) {
+      // At top of page — hide
+      navbar.classList.add('is-hidden');
+    } else if (currentScrollY > lastScrollY && currentScrollY > 60) {
+      // Scrolling down — hide
+      navbar.classList.add('is-hidden');
     } else {
-      navbar.style.transition = 'transform 0.33s ease';
-      navOffset = 0;
+      // Scrolling up — show
+      navbar.classList.remove('is-hidden');
     }
-    navbar.style.transform = `translateY(-${navOffset}px)`;
-  }, { passive: true });
 
-  // Desktop scroll — lerp-based fluid follow (stops when idle)
-  const DESKTOP_FACTOR = 0.25;
-  const DESKTOP_LERP = 0.08;
-  let deskLastScrollY = window.scrollY;
-  let deskTarget = -navbarHeight;
-  let deskCurrent = -navbarHeight;
-  let deskAnimating = false;
+    lastScrollY = currentScrollY;
+    ticking = false;
+  }
 
   window.addEventListener('scroll', () => {
-    if (isTouching) return;
-    const currentScrollY = window.scrollY;
-    const delta = currentScrollY - deskLastScrollY;
-    deskLastScrollY = currentScrollY;
-
-    if (currentScrollY < 10) {
-      deskTarget = -navbarHeight;
-    } else {
-      deskTarget += delta * DESKTOP_FACTOR;
-      deskTarget = Math.max(-navbarHeight, Math.min(0, deskTarget));
-    }
-
-    if (!deskAnimating) {
-      deskAnimating = true;
-      requestAnimationFrame(renderDesktopNavbar);
+    if (!ticking) {
+      requestAnimationFrame(updateNavbar);
+      ticking = true;
     }
   }, { passive: true });
-
-  function renderDesktopNavbar() {
-    if (isTouching) { deskAnimating = false; return; }
-    deskCurrent += (deskTarget - deskCurrent) * DESKTOP_LERP;
-    if (Math.abs(deskCurrent - deskTarget) < 0.5) {
-      deskCurrent = deskTarget;
-      deskAnimating = false;
-    }
-    navbar.style.transform = `translateY(${deskCurrent}px)`;
-    if (deskAnimating) requestAnimationFrame(renderDesktopNavbar);
-  }
 
   /* ── Q&A Cards ── */
   function toggleCard(card) {
@@ -141,51 +93,31 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* ══════════════════════════════════════
-     SCROLL-REACTIVE WAVE DIVIDERS
-     Pre-rendered once, animated with CSS transform (compositor-only, 60fps)
+     WAVE DIVIDERS — static paths, CSS-only animation
      ══════════════════════════════════════ */
-  const VW = 1440, VH = 160;
-  const AMP = 28;
-  const FREQ = 0.8;
-  const BASE_Y = VH * 0.55;
-  const TWO_PI_FREQ = Math.PI * 2 * FREQ;
-  const WAVE_PTS = 60;
+  const VW = 1440, VH = 160, WAVE_PTS = 60;
+  const BASE_Y = VH * 0.55, AMP = 28;
+  const TWO_PI_FREQ = Math.PI * 2 * 0.8;
 
-  // Build wave path ONCE
-  function buildWave() {
-    let d = '';
-    for (let i = 0; i <= WAVE_PTS; i++) {
-      const x = (i / WAVE_PTS) * VW;
-      const y = BASE_Y + Math.sin((x / VW) * TWO_PI_FREQ) * AMP;
-      d += i === 0 ? `M ${x},${y} ` : `L ${x},${y} `;
-    }
-    return d;
+  // Build wave path once at load
+  let d = '';
+  for (let i = 0; i <= WAVE_PTS; i++) {
+    const x = (i / WAVE_PTS) * VW;
+    const y = BASE_Y + Math.sin((x / VW) * TWO_PI_FREQ) * AMP;
+    d += i === 0 ? `M ${x},${y} ` : `L ${x},${y} `;
   }
 
-  const wave = buildWave();
-
-  // Set static paths once — never touched again
-  const waveSvgs = [];
+  // Set paths once — CSS @keyframes handles animation from here
   document.querySelectorAll('.wave-divider').forEach(divider => {
     const wavePath = divider.querySelector('.wavePath');
     const fillPath = divider.querySelector('.fillPath');
-    const svg = divider.querySelector('svg');
-    if (wavePath) wavePath.setAttribute('d', wave);
+    if (wavePath) wavePath.setAttribute('d', d);
     if (fillPath && divider.id === 'wave2') {
-      fillPath.setAttribute('d', wave + ` L ${VW},${VH + 20} L 0,${VH + 20} Z`);
+      fillPath.setAttribute('d', d + ` L ${VW},${VH + 20} L 0,${VH + 20} Z`);
     } else if (fillPath && divider.id !== 'wave1') {
-      fillPath.setAttribute('d', wave + ` L ${VW},${VH * 2} L 0,${VH * 2} Z`);
+      fillPath.setAttribute('d', d + ` L ${VW},${VH * 2} L 0,${VH * 2} Z`);
     }
-    if (svg) waveSvgs.push(svg);
   });
-
-  // Animate with CSS transform on scroll — compositor-only, 60fps guaranteed
-  window.addEventListener('scroll', () => {
-    const shift = -(window.scrollY * 0.15);
-    for (let i = 0; i < waveSvgs.length; i++) {
-      waveSvgs[i].style.transform = `translateX(${shift}px)`;
-    }
-  }, { passive: true });
 
 });
 
