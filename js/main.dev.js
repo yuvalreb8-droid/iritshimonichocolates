@@ -85,10 +85,17 @@ document.addEventListener('DOMContentLoaded', () => {
     navbar.style.transform = `translateY(-${navOffset}px)`;
   }, { passive: true });
 
-  // Desktop scroll — 1:1 scroll-following with compositor isolation
+  // Desktop scroll — 1:1 scroll-following, writes batched to rAF
   let deskLastScrollY = window.scrollY;
   let deskOffset = -maxOffset;
+  let deskRafId = 0;
   let snapTimer = null;
+
+  function renderNavbar() {
+    navbar.style.transition = 'none';
+    navbar.style.transform = `translateY(${Math.round(deskOffset)}px)`;
+    deskRafId = 0;
+  }
 
   window.addEventListener('scroll', () => {
     if (isTouching) return;
@@ -104,14 +111,15 @@ document.addEventListener('DOMContentLoaded', () => {
       deskOffset = Math.max(-maxOffset, Math.min(0, deskOffset - delta));
     }
 
-    navbar.style.transition = 'none';
-    navbar.style.transform = `translateY(${deskOffset}px)`;
+    // Batch DOM write to next frame — never during scroll event
+    if (!deskRafId) deskRafId = requestAnimationFrame(renderNavbar);
 
-    // Snap to nearest state when scrolling stops
+    // Snap when scrolling stops
     snapTimer = setTimeout(() => {
+      if (deskRafId) { cancelAnimationFrame(deskRafId); deskRafId = 0; }
       navbar.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
       deskOffset = deskOffset < -maxOffset * 0.5 ? -maxOffset : 0;
-      navbar.style.transform = `translateY(${deskOffset}px)`;
+      navbar.style.transform = `translateY(${Math.round(deskOffset)}px)`;
     }, 150);
   }, { passive: true });
 
