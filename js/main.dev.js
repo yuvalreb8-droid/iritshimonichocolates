@@ -36,56 +36,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── Navbar show/hide — 1:1 scroll tracking ─────────────────
-     Navbar offset follows scroll delta pixel-for-pixel.
-     Single rAF write per frame, translate3d for compositor layer.
-     No layout reads in scroll/touch handlers. No rAF loop.
+  /* ── Navbar show/hide — GSAP ScrollTrigger ───────────────────
+     ScrollTrigger handles desktop + mobile, including iOS momentum.
+     Navbar stays on its own compositor layer (translate3d).
+     No custom scroll/touch listeners for navbar. No rAF loops.
   ──────────────────────────────────────────────────────────── */
-  const navH = navbar.offsetHeight;
-  let navOffset = -navH;
-  let lastScrollY = window.scrollY;
-  let navTicking = false;
-  let isTouching = false;
+  gsap.registerPlugin(ScrollTrigger);
 
-  // Initial hidden state
-  navbar.style.transform = `translate3d(0, ${navOffset}px, 0)`;
+  // Start hidden
+  gsap.set(navbar, { y: '-110%', force3D: true });
 
-  function renderNav() {
-    navbar.style.transform = `translate3d(0, ${Math.round(navOffset)}px, 0)`;
-    navTicking = false;
-  }
-
-  // Mobile: touchmove delta → 1:1 offset tracking
-  let touchLastY = 0;
-
-  window.addEventListener('touchstart', (e) => {
-    if (e.touches.length) {
-      touchLastY = e.touches[0].clientY;
-      isTouching = true;
-    }
-  }, { passive: true });
-
-  window.addEventListener('touchmove', (e) => {
-    if (!e.touches.length) return;
-    const y = e.touches[0].clientY;
-    const delta = touchLastY - y;          // positive = scrolling down
-    touchLastY = y;
-
-    if (window.scrollY < 10) {
-      navOffset = -navH;
-    } else {
-      navOffset = Math.max(-navH, Math.min(0, navOffset - delta));
-    }
-
-    if (!navTicking) {
-      navTicking = true;
-      requestAnimationFrame(renderNav);
-    }
-  }, { passive: true });
-
-  window.addEventListener('touchend', () => {
-    isTouching = false;
-  }, { passive: true });
+  // Show navbar when scrolling down past 80px (scrub = 1:1 tracking)
+  ScrollTrigger.create({
+    start: 80,
+    end: 'max',
+    onUpdate: (self) => {
+      if (self.scroll() < 10) {
+        gsap.set(navbar, { y: '-110%', force3D: true });
+      } else if (self.direction === -1) {
+        gsap.set(navbar, { y: '0%', force3D: true });
+      } else {
+        gsap.set(navbar, { y: '-110%', force3D: true });
+      }
+    },
+  });
 
   /* ── Q&A Cards ── */
   function toggleCard(card) {
@@ -159,26 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCachedRects();
   window.addEventListener('resize', updateCachedRects, { passive: true });
 
-  /* ── SINGLE scroll listener — wave target + desktop navbar 1:1 ── */
+  /* ── Scroll listener — wave animation target only ── */
   window.addEventListener('scroll', () => {
-    const y = window.scrollY;
-    targetOffset = y * SPEED;
-
-    if (!isTouching) {
-      const delta = y - lastScrollY;
-      lastScrollY = y;
-
-      if (y < 10) {
-        navOffset = -navH;
-      } else {
-        navOffset = Math.max(-navH, Math.min(0, navOffset - delta));
-      }
-
-      if (!navTicking) {
-        navTicking = true;
-        requestAnimationFrame(renderNav);
-      }
-    }
+    targetOffset = window.scrollY * SPEED;
   }, { passive: true });
 
   // Cache DOM lookups for wave dividers
