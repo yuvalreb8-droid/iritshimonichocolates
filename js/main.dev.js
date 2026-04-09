@@ -36,39 +36,76 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── Navbar show/hide — GSAP ScrollTrigger 1:1 tracking ──────
-     Navbar offset tracks scroll delta pixel-for-pixel via
-     ScrollTrigger's onUpdate. force3D keeps it on the compositor.
-     Handles desktop + mobile + iOS momentum automatically.
+  /* ── Navbar show/hide — 1:1 tracking ─────────────────────────
+     Desktop: GSAP ScrollTrigger (scroll events work fine).
+     Mobile: dedicated touchmove handlers (bypass iOS Safari's
+     throttled scroll events during momentum scroll).
+     Both share navY offset + gsap.set for compositor writes.
   ──────────────────────────────────────────────────────────── */
   gsap.registerPlugin(ScrollTrigger);
 
   const navH = navbar.offsetHeight;
   let navY = -navH;
+  let isTouching = false;
 
   gsap.set(navbar, { y: navY, force3D: true });
 
+  // ── Desktop: GSAP ScrollTrigger 1:1 ──
   ScrollTrigger.create({
     start: 0,
     end: 'max',
     onUpdate: (self) => {
+      if (isTouching) return;              // mobile touch handlers take over
       const scrollY = self.scroll();
       const velocity = self.getVelocity();
-      const delta = velocity / 60;        // approximate per-frame delta
+      const delta = velocity / 60;
 
       if (scrollY < 10) {
         navY = -navH;
       } else if (self.direction === 1) {
-        // Scrolling down → hide proportionally
         navY = Math.max(-navH, Math.min(0, navY - Math.abs(delta)));
       } else {
-        // Scrolling up → reveal proportionally
         navY = Math.max(-navH, Math.min(0, navY + Math.abs(delta)));
       }
 
       gsap.set(navbar, { y: Math.round(navY), force3D: true });
     },
   });
+
+  // ── Mobile: touchmove 1:1 tracking (bypasses iOS scroll throttle) ──
+  let touchLastY = 0;
+  let touchRafId = 0;
+
+  function renderNavTouch() {
+    gsap.set(navbar, { y: Math.round(navY), force3D: true });
+    touchRafId = 0;
+  }
+
+  window.addEventListener('touchstart', (e) => {
+    if (e.touches.length) {
+      touchLastY = e.touches[0].clientY;
+      isTouching = true;
+    }
+  }, { passive: true });
+
+  window.addEventListener('touchmove', (e) => {
+    if (!e.touches.length) return;
+    const y = e.touches[0].clientY;
+    const delta = touchLastY - y;
+    touchLastY = y;
+
+    if (window.scrollY < 10) {
+      navY = -navH;
+    } else {
+      navY = Math.max(-navH, Math.min(0, navY - delta));
+    }
+
+    if (!touchRafId) touchRafId = requestAnimationFrame(renderNavTouch);
+  }, { passive: true });
+
+  window.addEventListener('touchend', () => {
+    isTouching = false;
+  }, { passive: true });
 
   /* ── Q&A Cards ── */
   function toggleCard(card) {
