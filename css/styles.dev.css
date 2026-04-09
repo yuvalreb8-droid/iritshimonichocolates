@@ -85,6 +85,10 @@ p, h1, h2, h3, h4, li {
   z-index: 1000;
   background: #662502;
   overflow: visible;
+  will-change: transform;
+  contain: layout paint;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .navbar__inner {

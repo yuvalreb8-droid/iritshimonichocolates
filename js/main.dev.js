@@ -85,36 +85,34 @@ document.addEventListener('DOMContentLoaded', () => {
     navbar.style.transform = `translateY(-${navOffset}px)`;
   }, { passive: true });
 
-  // Desktop scroll — lerp-based fluid follow
-  const DESKTOP_FACTOR = 0.25;
-  const DESKTOP_LERP = 0.08;
+  // Desktop scroll — CSS transition handles animation on compositor thread
   let deskLastScrollY = window.scrollY;
-  let deskTarget = -navbarHeight;
-  let deskCurrent = -navbarHeight;
+  let deskTicking = false;
+  let navHidden = true;
+
+  function updateDesktopNavbar() {
+    const y = window.scrollY;
+    const shouldHide = y < 10 || (y > deskLastScrollY && y > 60);
+
+    if (shouldHide !== navHidden) {
+      navHidden = shouldHide;
+      navbar.style.transition = 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
+      navbar.style.transform = shouldHide
+        ? `translateY(-${maxOffset}px)`
+        : 'translateY(0)';
+    }
+
+    deskLastScrollY = y;
+    deskTicking = false;
+  }
 
   window.addEventListener('scroll', () => {
     if (isTouching) return;
-    const currentScrollY = window.scrollY;
-    const delta = currentScrollY - deskLastScrollY;
-    deskLastScrollY = currentScrollY;
-
-    if (currentScrollY < 10) {
-      deskTarget = -navbarHeight;
-    } else {
-      deskTarget += delta * DESKTOP_FACTOR;
-      deskTarget = Math.max(-navbarHeight, Math.min(0, deskTarget));
+    if (!deskTicking) {
+      requestAnimationFrame(updateDesktopNavbar);
+      deskTicking = true;
     }
   }, { passive: true });
-
-  function renderDesktopNavbar() {
-    if (!isTouching) {
-      deskCurrent += (deskTarget - deskCurrent) * DESKTOP_LERP;
-      if (Math.abs(deskCurrent - deskTarget) < 0.5) deskCurrent = deskTarget;
-      navbar.style.transform = `translateY(${deskCurrent}px)`;
-    }
-    requestAnimationFrame(renderDesktopNavbar);
-  }
-  requestAnimationFrame(renderDesktopNavbar);
 
   /* ── Q&A Cards ── */
   function toggleCard(card) {
