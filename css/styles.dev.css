@@ -420,7 +420,6 @@ p, h1, h2, h3, h4, li {
   margin-top: -160px;
   z-index: 10;
   pointer-events: none;
-  overflow: hidden;
 }
 
 #wave1 {
@@ -437,12 +436,9 @@ p, h1, h2, h3, h4, li {
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 300%;
-  margin-left: -100%;
+  width: 100%;
   height: 100%;
-  will-change: transform;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
+  overflow: visible;
 }
 
 /* ══════════════════════════════════════
