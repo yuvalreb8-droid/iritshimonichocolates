@@ -36,17 +36,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── Navbar: class toggle hide/show ── */
+  /* ── Safari momentum scroll fix ──
+     iOS Safari defers window.scrollY updates during momentum scroll.
+     This 1x1 transparent div forces Safari to keep scroll position synced. */
+  const ua = navigator.userAgent;
+  if (/(iPod|iPhone|iPad)/.test(ua) && /AppleWebKit/.test(ua)) {
+    const scrollSync = document.createElement('div');
+    scrollSync.style.cssText = 'height:0;overflow:hidden;position:absolute;top:0;left:0';
+    document.body.appendChild(scrollSync);
+    const syncScroll = () => { scrollSync.textContent = window.scrollY; };
+    ['scroll', 'touchstart', 'touchmove', 'touchend'].forEach(evt =>
+      window.addEventListener(evt, syncScroll, { passive: true, capture: true })
+    );
+  }
+
+  /* ── Navbar: JS fallback for browsers without scroll-state() ── */
   let lastScrollY = window.scrollY;
   let ticking = false;
-  let lastTouchY = 0;
-  let touchAccum = 0;
-  const TOUCH_THRESHOLD = 15;
 
   // Start hidden
   navbar.classList.add('is-hidden');
 
-  // --- Desktop: scroll-based (works fine on Chrome/Firefox/Edge) ---
   function updateNavbar() {
     const currentScrollY = window.scrollY;
     const distance = Math.abs(currentScrollY - lastScrollY);
@@ -72,35 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!ticking) {
       requestAnimationFrame(updateNavbar);
       ticking = true;
-    }
-  }, { passive: true });
-
-  // --- Mobile: touch-based (fires reliably during iOS momentum scroll) ---
-  window.addEventListener('touchstart', (e) => {
-    if (!e.touches.length) return;
-    lastTouchY = e.touches[0].clientY;
-    touchAccum = 0;
-  }, { passive: true });
-
-  window.addEventListener('touchmove', (e) => {
-    if (!e.touches.length) return;
-    const touchY = e.touches[0].clientY;
-    const delta = lastTouchY - touchY; // positive = scrolling down
-    lastTouchY = touchY;
-    touchAccum += delta;
-
-    if (window.scrollY <= 5) {
-      navbar.classList.add('is-hidden');
-      touchAccum = 0;
-      return;
-    }
-
-    if (touchAccum > TOUCH_THRESHOLD) {
-      navbar.classList.add('is-hidden');
-      touchAccum = 0;
-    } else if (touchAccum < -TOUCH_THRESHOLD) {
-      navbar.classList.remove('is-hidden');
-      touchAccum = 0;
     }
   }, { passive: true });
 

@@ -10,6 +10,7 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  container-type: scroll-state;
 }
 
 body {
@@ -82,17 +83,40 @@ p, h1, h2, h3, h4, li {
   top: 0;
   left: 0;
   width: 100%;
+  height: auto;
   z-index: 1000;
   background: #662502;
   overflow: visible;
-  transform: translate3d(0, 0, 0);
+  transform: translateY(0) translateZ(0);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  contain: layout paint size;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
 }
 
+/* JS fallback class */
 .navbar.is-hidden {
-  transform: translate3d(0, -110%, 0);
+  transform: translateY(-110%) translateZ(0);
+}
+
+/* CSS-only scroll-state: bypasses JS entirely on supporting browsers */
+@container scroll-state(scrollable: top) {
+  .navbar {
+    transform: translateY(-110%) translateZ(0);
+  }
+}
+
+@container scroll-state(direction: block-start) {
+  .navbar {
+    transform: translateY(0) translateZ(0);
+  }
+}
+
+@container scroll-state(direction: block-end) {
+  .navbar {
+    transform: translateY(-110%) translateZ(0);
+  }
 }
 
 .navbar__inner {
