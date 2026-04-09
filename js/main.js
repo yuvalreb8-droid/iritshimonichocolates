@@ -153,28 +153,41 @@ document.addEventListener('DOMContentLoaded', () => {
   const wave1Div = document.getElementById('wave1');
   const wave2Div = document.getElementById('wave2');
 
+  const WAVE_PTS = 60;
+  // Pre-compute x positions
+  const waveXPositions = [];
+  const waveXPcts = [];
+  for (let i = 0; i <= WAVE_PTS; i++) {
+    waveXPositions.push((i / WAVE_PTS) * VW);
+    waveXPcts.push((i / WAVE_PTS) * 100);
+  }
+  const TWO_PI_FREQ = Math.PI * 2 * FREQ;
+
   function buildWave(phase) {
-    const pts = 120;
     let d = '';
-    for (let i = 0; i <= pts; i++) {
-      const x = (i / pts) * VW;
-      const y = BASE_Y + Math.sin((x / VW) * Math.PI * 2 * FREQ + phase) * AMP;
+    for (let i = 0; i <= WAVE_PTS; i++) {
+      const x = waveXPositions[i];
+      const y = BASE_Y + Math.sin((x / VW) * TWO_PI_FREQ + phase) * AMP;
       d += i === 0 ? `M ${x},${y} ` : `L ${x},${y} `;
     }
     return d;
   }
 
   function buildClipPoints(phase) {
-    const pts = 120;
     const points = [];
-    for (let i = 0; i <= pts; i++) {
-      const xPct = (i / pts) * 100;
-      const y = BASE_Y + Math.sin(((i / pts) * VW / VW) * Math.PI * 2 * FREQ + phase) * AMP;
-      const yPct = (y / VH) * 100;
-      points.push({ xPct, yPct });
+    for (let i = 0; i <= WAVE_PTS; i++) {
+      const y = BASE_Y + Math.sin((waveXPositions[i] / VW) * TWO_PI_FREQ + phase) * AMP;
+      points.push({ xPct: waveXPcts[i], yPct: (y / VH) * 100 });
     }
     return points;
   }
+
+  // Cache DOM lookups for wave dividers
+  const waveDividers = Array.from(document.querySelectorAll('.wave-divider')).map(divider => ({
+    divider,
+    wavePath: divider.querySelector('.wavePath'),
+    fillPath: divider.querySelector('.fillPath'),
+  }));
 
   let frameSkip = 0;
   function animateWaves() {
@@ -192,9 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const clipPoints = buildClipPoints(phase);
 
     // Section dividers — stroke + fill for non-wave1 dividers
-    document.querySelectorAll('.wave-divider').forEach(divider => {
-      const wavePath = divider.querySelector('.wavePath');
-      const fillPath = divider.querySelector('.fillPath');
+    waveDividers.forEach(({ divider, wavePath, fillPath }) => {
       if (wavePath) wavePath.setAttribute('d', wave);
       if (fillPath && divider.id === 'wave2') {
         fillPath.setAttribute('d', wave + ` L ${VW},${VH + 20} L 0,${VH + 20} Z`);
