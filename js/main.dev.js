@@ -36,54 +36,85 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── Safari momentum scroll fix ──
-     iOS Safari defers window.scrollY updates during momentum scroll.
-     This 1x1 transparent div forces Safari to keep scroll position synced. */
-  const ua = navigator.userAgent;
-  if (/(iPod|iPhone|iPad)/.test(ua) && /AppleWebKit/.test(ua)) {
-    const scrollSync = document.createElement('div');
-    scrollSync.style.cssText = 'height:0;overflow:hidden;position:absolute;top:0;left:0';
-    document.body.appendChild(scrollSync);
-    const syncScroll = () => { scrollSync.textContent = window.scrollY; };
-    ['scroll', 'touchstart', 'touchmove', 'touchend'].forEach(evt =>
-      window.addEventListener(evt, syncScroll, { passive: true, capture: true })
-    );
-  }
+  /* ── Navbar: touch-linked 1:1 hide/show ── */
+  const navbarHeight = navbar.offsetHeight + 10;
+  const maxOffset = navbarHeight * 1.1;
+  let navOffset = maxOffset;
+  let lastTouchY = 0;
+  let isTouching = false;
 
-  /* ── Navbar: JS fallback for browsers without scroll-state() ── */
-  let lastScrollY = window.scrollY;
-  let ticking = false;
+  navbar.style.transform = `translateY(-${maxOffset}px)`;
 
-  // Start hidden
-  navbar.classList.add('is-hidden');
+  window.addEventListener('touchstart', (e) => {
+    if (!e.touches.length) return;
+    lastTouchY = e.touches[0].clientY;
+    isTouching = true;
+    // Force disable transition during drag
+    navbar.style.setProperty('transition', 'none', 'important');
+  }, { passive: true });
 
-  function updateNavbar() {
-    const currentScrollY = window.scrollY;
-    const distance = Math.abs(currentScrollY - lastScrollY);
+  window.addEventListener('touchmove', (e) => {
+    if (!isTouching || !e.touches.length) return;
+    const touchY = e.touches[0].clientY;
+    const delta = lastTouchY - touchY;
+    lastTouchY = touchY;
 
-    if (distance < 5) {
-      ticking = false;
+    // Hide at top of page
+    if (window.scrollY <= 5) {
+      navOffset = maxOffset;
+      navbar.style.transform = `translateY(-${maxOffset}px)`;
       return;
     }
 
-    if (currentScrollY <= 5) {
-      navbar.classList.add('is-hidden');
-    } else if (currentScrollY > lastScrollY && currentScrollY > 60) {
-      navbar.classList.add('is-hidden');
-    } else {
-      navbar.classList.remove('is-hidden');
-    }
+    navOffset = Math.max(0, Math.min(maxOffset, navOffset + delta));
+    navbar.style.transform = `translateY(-${navOffset}px)`;
+  }, { passive: true });
 
-    lastScrollY = currentScrollY;
-    ticking = false;
-  }
+  window.addEventListener('touchend', () => {
+    isTouching = false;
+    // Re-enable transition for snap
+    navbar.style.removeProperty('transition');
+
+    if (navOffset > maxOffset * 0.5) {
+      navbar.style.transition = 'transform 0.52s ease';
+      navOffset = maxOffset;
+    } else {
+      navbar.style.transition = 'transform 0.33s ease';
+      navOffset = 0;
+    }
+    navbar.style.transform = `translateY(-${navOffset}px)`;
+  }, { passive: true });
+
+  // Desktop scroll — lerp-based fluid follow
+  const DESKTOP_FACTOR = 0.25;
+  const DESKTOP_LERP = 0.08;
+  let deskLastScrollY = window.scrollY;
+  let deskTarget = -navbarHeight;
+  let deskCurrent = -navbarHeight;
 
   window.addEventListener('scroll', () => {
-    if (!ticking) {
-      requestAnimationFrame(updateNavbar);
-      ticking = true;
+    if (isTouching) return;
+    const currentScrollY = window.scrollY;
+    const delta = currentScrollY - deskLastScrollY;
+    deskLastScrollY = currentScrollY;
+
+    if (currentScrollY < 10) {
+      deskTarget = -navbarHeight;
+    } else {
+      deskTarget += delta * DESKTOP_FACTOR;
+      deskTarget = Math.max(-navbarHeight, Math.min(0, deskTarget));
     }
   }, { passive: true });
+
+  function renderDesktopNavbar() {
+    if (!isTouching) {
+      deskCurrent += (deskTarget - deskCurrent) * DESKTOP_LERP;
+      if (Math.abs(deskCurrent - deskTarget) < 0.5) deskCurrent = deskTarget;
+      navbar.style.transform = `translateY(${deskCurrent}px)`;
+    }
+    requestAnimationFrame(renderDesktopNavbar);
+  }
+  requestAnimationFrame(renderDesktopNavbar);
 
   /* ── Q&A Cards ── */
   function toggleCard(card) {
@@ -103,31 +134,181 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* ══════════════════════════════════════
-     WAVE DIVIDERS — static paths, CSS-only animation
+     SCROLL-REACTIVE WAVE DIVIDERS
      ══════════════════════════════════════ */
-  const VW = 1440, VH = 160, WAVE_PTS = 60;
-  const BASE_Y = VH * 0.55, AMP = 28;
-  const TWO_PI_FREQ = Math.PI * 2 * 0.8;
+  const VW = 1440, VH = 160;
+  const AMP = 28;
+  const FREQ = 0.8;
+  const SPEED = 0.4;
+  const BASE_Y = VH * 0.55;
 
-  // Build wave path once at load
-  let d = '';
+  let currentOffset = 0, targetOffset = 0;
+
+  window.addEventListener('scroll', () => {
+    targetOffset = window.scrollY * SPEED;
+  }, { passive: true });
+
+  const heroSection = document.getElementById('hero');
+  const workshopSection = document.getElementById('workshop');
+  const wave1Div = document.getElementById('wave1');
+  const wave2Div = document.getElementById('wave2');
+
+  const WAVE_PTS = 60;
+  // Pre-compute x positions
+  const waveXPositions = [];
+  const waveXPcts = [];
   for (let i = 0; i <= WAVE_PTS; i++) {
-    const x = (i / WAVE_PTS) * VW;
-    const y = BASE_Y + Math.sin((x / VW) * TWO_PI_FREQ) * AMP;
-    d += i === 0 ? `M ${x},${y} ` : `L ${x},${y} `;
+    waveXPositions.push((i / WAVE_PTS) * VW);
+    waveXPcts.push((i / WAVE_PTS) * 100);
+  }
+  const TWO_PI_FREQ = Math.PI * 2 * FREQ;
+
+  function buildWave(phase) {
+    let d = '';
+    for (let i = 0; i <= WAVE_PTS; i++) {
+      const x = waveXPositions[i];
+      const y = BASE_Y + Math.sin((x / VW) * TWO_PI_FREQ + phase) * AMP;
+      d += i === 0 ? `M ${x},${y} ` : `L ${x},${y} `;
+    }
+    return d;
   }
 
-  // Set paths once — CSS @keyframes handles animation from here
-  document.querySelectorAll('.wave-divider').forEach(divider => {
-    const wavePath = divider.querySelector('.wavePath');
-    const fillPath = divider.querySelector('.fillPath');
-    if (wavePath) wavePath.setAttribute('d', d);
-    if (fillPath && divider.id === 'wave2') {
-      fillPath.setAttribute('d', d + ` L ${VW},${VH + 20} L 0,${VH + 20} Z`);
-    } else if (fillPath && divider.id !== 'wave1') {
-      fillPath.setAttribute('d', d + ` L ${VW},${VH * 2} L 0,${VH * 2} Z`);
+  function buildClipPoints(phase) {
+    const points = [];
+    for (let i = 0; i <= WAVE_PTS; i++) {
+      const y = BASE_Y + Math.sin((waveXPositions[i] / VW) * TWO_PI_FREQ + phase) * AMP;
+      points.push({ xPct: waveXPcts[i], yPct: (y / VH) * 100 });
     }
-  });
+    return points;
+  }
+
+  // Cache layout measurements — update on scroll (not every frame)
+  const cachedRects = { wave1: null, hero: null, workshop: null };
+  function updateCachedRects() {
+    if (wave1Div) cachedRects.wave1 = wave1Div.getBoundingClientRect();
+    if (heroSection) cachedRects.hero = heroSection.getBoundingClientRect();
+    if (workshopSection) cachedRects.workshop = workshopSection.getBoundingClientRect();
+  }
+  updateCachedRects();
+  window.addEventListener('scroll', updateCachedRects, { passive: true });
+  window.addEventListener('resize', updateCachedRects, { passive: true });
+
+  // Cache DOM lookups for wave dividers
+  const waveDividers = Array.from(document.querySelectorAll('.wave-divider')).map(divider => ({
+    divider,
+    wavePath: divider.querySelector('.wavePath'),
+    fillPath: divider.querySelector('.fillPath'),
+  }));
+
+  let frameSkip = 0;
+  function animateWaves() {
+    // Throttle to 30fps (skip every other frame) for performance
+    frameSkip = (frameSkip + 1) % 2;
+    if (frameSkip === 1) {
+      if (wavesActive) requestAnimationFrame(animateWaves);
+      else animationRunning = false;
+      return;
+    }
+
+    currentOffset += (targetOffset - currentOffset) * 0.12; // doubled lerp to compensate for 30fps
+    const phase = currentOffset * 0.01;
+    const wave = buildWave(phase);
+    const clipPoints = buildClipPoints(phase);
+
+    // Section dividers — stroke + fill for non-wave1 dividers
+    waveDividers.forEach(({ divider, wavePath, fillPath }) => {
+      if (wavePath) wavePath.setAttribute('d', wave);
+      if (fillPath && divider.id === 'wave2') {
+        fillPath.setAttribute('d', wave + ` L ${VW},${VH + 20} L 0,${VH + 20} Z`);
+      } else if (fillPath && divider.id !== 'wave1') {
+        fillPath.setAttribute('d', wave + ` L ${VW},${VH * 2} L 0,${VH * 2} Z`);
+      }
+    });
+
+    // Wave1 clip-path: clip hero bottom and workshop top to the wave curve
+    if (wave1Div && heroSection && workshopSection) {
+      const waveRect = cachedRects.wave1;
+      const heroRect = cachedRects.hero;
+      const workshopRect = cachedRects.workshop;
+
+      // Hero clip: everything visible, bottom edge follows wave curve
+      // Convert wave points from wave-div-local to hero-local percentages
+      let heroClip = '0% 0%, 100% 0%, '; // top-left, top-right
+      // Right edge down to wave start
+      for (let i = clipPoints.length - 1; i >= 0; i--) {
+        const xPct = clipPoints[i].xPct;
+        // Wave y in wave-div local pixels
+        const waveYLocal = (clipPoints[i].yPct / 100) * waveRect.height;
+        // Position relative to hero: waveRect.top - heroRect.top + waveYLocal
+        const yInHero = (waveRect.top - heroRect.top) + waveYLocal;
+        const yPct = (yInHero / heroRect.height) * 100;
+        heroClip += `${xPct}% ${yPct}%`;
+        if (i > 0) heroClip += ', ';
+      }
+      heroSection.style.clipPath = `polygon(${heroClip})`;
+
+      // Workshop clip: top edge from wave1, bottom edge from wave2
+      // Top edge: follows wave1 curve (left to right)
+      let workshopClip = '';
+      for (let i = 0; i < clipPoints.length; i++) {
+        const xPct = clipPoints[i].xPct;
+        const waveYLocal = (clipPoints[i].yPct / 100) * waveRect.height;
+        const yInWorkshop = (waveRect.top - workshopRect.top) + waveYLocal;
+        const yPct = (yInWorkshop / workshopRect.height) * 100;
+        workshopClip += `${xPct}% ${yPct}%, `;
+      }
+
+      // Bottom edge: extend to full height (wave2 divider covers the transition visually)
+      workshopClip += '100% 100%, 0% 100%';
+
+      workshopSection.style.clipPath = `polygon(${workshopClip})`;
+    }
+
+    // Wave2: also clip workshop bottom independently (in case wave1 block didn't run)
+    if (wave2Div && workshopSection && !wave1Div) {
+      const wave2Rect = wave2Div.getBoundingClientRect();
+      const wsRect = workshopSection.getBoundingClientRect();
+      let wsClip = '0% 0%, 100% 0%, 100% 100%, 0% 100%';
+      workshopSection.style.clipPath = `polygon(${wsClip})`;
+    }
+
+    // Only continue if any wave/section is still visible (performance: pause off-screen)
+    if (wavesActive) {
+      requestAnimationFrame(animateWaves);
+    } else {
+      animationRunning = false;
+    }
+  }
+
+  // IntersectionObserver: only run wave animation when waves or relevant sections are visible
+  let wavesActive = false;
+  let animationRunning = false;
+  const visibleElements = new Set();
+
+  function startAnimationIfNeeded() {
+    if (!animationRunning && visibleElements.size > 0) {
+      wavesActive = true;
+      animationRunning = true;
+      requestAnimationFrame(animateWaves);
+    }
+    wavesActive = visibleElements.size > 0;
+  }
+
+  const waveObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        visibleElements.add(entry.target);
+      } else {
+        visibleElements.delete(entry.target);
+      }
+    });
+    startAnimationIfNeeded();
+  }, { rootMargin: '100px' });
+
+  // Observe wave dividers + hero + workshop (all elements that depend on the animation)
+  document.querySelectorAll('.wave-divider').forEach(el => waveObserver.observe(el));
+  if (heroSection) waveObserver.observe(heroSection);
+  if (workshopSection) waveObserver.observe(workshopSection);
 
 });
 
@@ -205,7 +386,7 @@ function initBlobCarousel(stackId, btnId, images) {
   back.active.style.opacity    = '1';
   back.inactive.style.opacity  = '0';
 
-  function crossfade(blob, nextSrc, afterSrc, onDone) {
+  function crossfade(blob, nextSrc, afterSrc) {
     // Load the incoming image into the inactive layer (already preloaded, instant)
     blob.inactive.src = nextSrc;
 
@@ -213,42 +394,36 @@ function initBlobCarousel(stackId, btnId, images) {
     blob.inactive.style.opacity = '1';
     blob.active.style.opacity   = '0';
 
-    // After transition completes: swap roles (no setTimeout, no main thread blocking)
-    blob.inactive.addEventListener('transitionend', function handler(e) {
-      if (e.propertyName !== 'opacity') return;
-      blob.inactive.removeEventListener('transitionend', handler);
-
+    // After transition: swap layer roles, seed the next incoming image
+    setTimeout(() => {
       const prevActive   = blob.active;
       const prevInactive = blob.inactive;
-      blob.active   = prevInactive;
-      blob.inactive = prevActive;
 
-      blob.inactive.src = afterSrc;
+      blob.active   = prevInactive;  // new active = was incoming
+      blob.inactive = prevActive;    // new inactive = was active
+
+      // Seed next-next image into the now-inactive layer (invisible)
+      blob.inactive.src     = afterSrc;
       blob.inactive.style.opacity = '0';
-
-      if (onDone) onDone();
-    });
+    }, 700); // matches CSS transition duration (0.65s) + small buffer
   }
 
   function advance() {
     if (busy) return;
     busy = true;
 
-    const next           = (current + 1) % images.length;
-    const afterNext      = (current + 2) % images.length;
+    const next          = (current + 1) % images.length;
+    const afterNext     = (current + 2) % images.length;
     const afterAfterNext = (current + 3) % images.length;
 
-    // Track when both blobs finish
-    let done = 0;
-    function onBlobDone() {
-      done++;
-      if (done >= 2) busy = false;
-    }
-
-    crossfade(front, images[next],      images[afterNext],      onBlobDone);
-    crossfade(back,  images[afterNext],  images[afterAfterNext], onBlobDone);
+    // Crossfade both blobs simultaneously
+    crossfade(front, images[next],      images[afterNext]);
+    crossfade(back,  images[afterNext], images[afterAfterNext]);
 
     current = next;
+
+    // Unlock after transition fully completes
+    setTimeout(() => { busy = false; }, 750);
   }
 
   // Single event path for both click on stack and button

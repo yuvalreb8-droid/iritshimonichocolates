@@ -10,7 +10,6 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
-  container-type: scroll-state;
 }
 
 body {
@@ -83,40 +82,9 @@ p, h1, h2, h3, h4, li {
   top: 0;
   left: 0;
   width: 100%;
-  height: auto;
   z-index: 1000;
   background: #662502;
   overflow: visible;
-  transform: translateY(0) translateZ(0);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
-  contain: layout paint size;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
-/* JS fallback class */
-.navbar.is-hidden {
-  transform: translateY(-110%) translateZ(0);
-}
-
-/* CSS-only scroll-state: bypasses JS entirely on supporting browsers */
-@container scroll-state(scrollable: top) {
-  .navbar {
-    transform: translateY(-110%) translateZ(0);
-  }
-}
-
-@container scroll-state(direction: block-start) {
-  .navbar {
-    transform: translateY(0) translateZ(0);
-  }
-}
-
-@container scroll-state(direction: block-end) {
-  .navbar {
-    transform: translateY(-110%) translateZ(0);
-  }
 }
 
 .navbar__inner {
@@ -345,7 +313,7 @@ p, h1, h2, h3, h4, li {
   box-shadow:
     0 0 0 4px rgba(255, 114, 0, 0.5),
     0 10px 30px rgba(0, 0, 0, 0.3);
-  animation: blobMorph 12s ease-in-out infinite;
+  animation: blobMorph 8s ease-in-out infinite;
   will-change: border-radius;
   contain: layout style paint;
 }
@@ -448,7 +416,6 @@ p, h1, h2, h3, h4, li {
   margin-top: -160px;
   z-index: 10;
   pointer-events: none;
-  overflow: hidden;
 }
 
 #wave1 {
@@ -464,23 +431,10 @@ p, h1, h2, h3, h4, li {
   display: block;
   position: absolute;
   bottom: 0;
-  left: -100%;
-  width: 300%;
+  left: 0;
+  width: 100%;
   height: 100%;
-  will-change: transform;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  animation: wave-drift 8s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite;
-}
-
-#wave2 svg {
-  animation-duration: 6s;
-  animation-direction: reverse;
-}
-
-@keyframes wave-drift {
-  0%   { transform: translate3d(0, 0, 0); }
-  100% { transform: translate3d(-33.33%, 0, 0); }
+  overflow: visible;
 }
 
 /* ══════════════════════════════════════
@@ -702,6 +656,7 @@ p, h1, h2, h3, h4, li {
   background: #d4b870;
   box-shadow: 0 8px 30px rgba(102, 37, 2, 0.14);
   z-index: 2;
+  animation: blobMorph 10s ease-in-out infinite;
   transition: opacity 0.65s ease-in-out;
 }
 
@@ -872,7 +827,8 @@ p, h1, h2, h3, h4, li {
 .qa__card:nth-child(8) { background: #e0c8a0; color: #3b1a08; transform: rotate(7.8deg) translateX(10px);    }
 
 .qa__card:hover {
-  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.25), inset 0 0 0 1000px rgba(255, 255, 255, 0.03);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.25);
+  filter: brightness(1.03);
 }
 
 /* Corner filler — fades in to square off bottom corners */
@@ -952,7 +908,7 @@ p, h1, h2, h3, h4, li {
 
 .qa__card-btn svg { color: inherit; }
 
-/* ── Answer — clips in below card (compositor-only, no layout reflow) ── */
+/* ── Answer — fades in below card ── */
 .qa__card-answer {
   position: absolute;
   top: 100%;
@@ -961,23 +917,21 @@ p, h1, h2, h3, h4, li {
   z-index: 10;
   background: inherit;
   border-radius: 0 0 18px 18px;
-  padding: 0.8rem 1.5rem 1.2rem;
+  padding: 0 1.5rem;
+  max-height: 0;
   border-top: 2px solid rgba(59, 26, 8, 0.15);
   opacity: 0;
-  clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  will-change: clip-path, opacity;
-  transition: clip-path 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.35s ease;
-  pointer-events: none;
+  overflow: hidden;
+  transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.35s ease,
+              padding 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .qa__card.active .qa__card-answer {
   opacity: 1;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  max-height: 300px;
+  padding: 0.8rem 1.5rem 1.2rem;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  pointer-events: auto;
 }
 
 .qa__card-answer p {
