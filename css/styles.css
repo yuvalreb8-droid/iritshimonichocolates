@@ -1010,6 +1010,15 @@ img {
     padding: 0.5rem 1rem;
   }
 
+  .wave-divider {
+    height: 80px;
+    margin-top: -80px;
+  }
+
+  .qa {
+    padding-bottom: 80px;
+  }
+
   .contact__row {
     flex-direction: column;
     text-align: center;
@@ -1022,8 +1031,8 @@ img {
   }
 
   .contact__icon-img {
-    width: 90px;
-    height: 90px;
+    width: 70px;
+    height: 70px;
   }
 
   .contact__icon-label {
