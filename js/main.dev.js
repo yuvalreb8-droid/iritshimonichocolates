@@ -85,12 +85,13 @@ document.addEventListener('DOMContentLoaded', () => {
     navbar.style.transform = `translateY(-${navOffset}px)`;
   }, { passive: true });
 
-  // Desktop scroll — lerp-based fluid follow
+  // Desktop scroll — lerp-based fluid follow (stops when idle)
   const DESKTOP_FACTOR = 0.25;
   const DESKTOP_LERP = 0.08;
   let deskLastScrollY = window.scrollY;
   let deskTarget = -navbarHeight;
   let deskCurrent = -navbarHeight;
+  let deskAnimating = false;
 
   window.addEventListener('scroll', () => {
     if (isTouching) return;
@@ -104,17 +105,23 @@ document.addEventListener('DOMContentLoaded', () => {
       deskTarget += delta * DESKTOP_FACTOR;
       deskTarget = Math.max(-navbarHeight, Math.min(0, deskTarget));
     }
+
+    if (!deskAnimating) {
+      deskAnimating = true;
+      requestAnimationFrame(renderDesktopNavbar);
+    }
   }, { passive: true });
 
   function renderDesktopNavbar() {
-    if (!isTouching) {
-      deskCurrent += (deskTarget - deskCurrent) * DESKTOP_LERP;
-      if (Math.abs(deskCurrent - deskTarget) < 0.5) deskCurrent = deskTarget;
-      navbar.style.transform = `translateY(${deskCurrent}px)`;
+    if (isTouching) { deskAnimating = false; return; }
+    deskCurrent += (deskTarget - deskCurrent) * DESKTOP_LERP;
+    if (Math.abs(deskCurrent - deskTarget) < 0.5) {
+      deskCurrent = deskTarget;
+      deskAnimating = false;
     }
-    requestAnimationFrame(renderDesktopNavbar);
+    navbar.style.transform = `translateY(${deskCurrent}px)`;
+    if (deskAnimating) requestAnimationFrame(renderDesktopNavbar);
   }
-  requestAnimationFrame(renderDesktopNavbar);
 
   /* ── Q&A Cards ── */
   function toggleCard(card) {
@@ -173,26 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return d;
   }
 
-  function buildClipPoints(phase) {
-    const points = [];
-    for (let i = 0; i <= WAVE_PTS; i++) {
-      const y = BASE_Y + Math.sin((waveXPositions[i] / VW) * TWO_PI_FREQ + phase) * AMP;
-      points.push({ xPct: waveXPcts[i], yPct: (y / VH) * 100 });
-    }
-    return points;
-  }
-
-  // Cache layout measurements — update on scroll (not every frame)
-  const cachedRects = { wave1: null, hero: null, workshop: null };
-  function updateCachedRects() {
-    if (wave1Div) cachedRects.wave1 = wave1Div.getBoundingClientRect();
-    if (heroSection) cachedRects.hero = heroSection.getBoundingClientRect();
-    if (workshopSection) cachedRects.workshop = workshopSection.getBoundingClientRect();
-  }
-  updateCachedRects();
-  window.addEventListener('scroll', updateCachedRects, { passive: true });
-  window.addEventListener('resize', updateCachedRects, { passive: true });
-
   // Cache DOM lookups for wave dividers
   const waveDividers = Array.from(document.querySelectorAll('.wave-divider')).map(divider => ({
     divider,
@@ -213,7 +200,6 @@ document.addEventListener('DOMContentLoaded', () => {
     currentOffset += (targetOffset - currentOffset) * 0.12; // doubled lerp to compensate for 30fps
     const phase = currentOffset * 0.01;
     const wave = buildWave(phase);
-    const clipPoints = buildClipPoints(phase);
 
     // Section dividers — stroke + fill for non-wave1 dividers
     waveDividers.forEach(({ divider, wavePath, fillPath }) => {
@@ -224,53 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
         fillPath.setAttribute('d', wave + ` L ${VW},${VH * 2} L 0,${VH * 2} Z`);
       }
     });
-
-    // Wave1 clip-path: clip hero bottom and workshop top to the wave curve
-    if (wave1Div && heroSection && workshopSection) {
-      const waveRect = cachedRects.wave1;
-      const heroRect = cachedRects.hero;
-      const workshopRect = cachedRects.workshop;
-
-      // Hero clip: everything visible, bottom edge follows wave curve
-      // Convert wave points from wave-div-local to hero-local percentages
-      let heroClip = '0% 0%, 100% 0%, '; // top-left, top-right
-      // Right edge down to wave start
-      for (let i = clipPoints.length - 1; i >= 0; i--) {
-        const xPct = clipPoints[i].xPct;
-        // Wave y in wave-div local pixels
-        const waveYLocal = (clipPoints[i].yPct / 100) * waveRect.height;
-        // Position relative to hero: waveRect.top - heroRect.top + waveYLocal
-        const yInHero = (waveRect.top - heroRect.top) + waveYLocal;
-        const yPct = (yInHero / heroRect.height) * 100;
-        heroClip += `${xPct}% ${yPct}%`;
-        if (i > 0) heroClip += ', ';
-      }
-      heroSection.style.clipPath = `polygon(${heroClip})`;
-
-      // Workshop clip: top edge from wave1, bottom edge from wave2
-      // Top edge: follows wave1 curve (left to right)
-      let workshopClip = '';
-      for (let i = 0; i < clipPoints.length; i++) {
-        const xPct = clipPoints[i].xPct;
-        const waveYLocal = (clipPoints[i].yPct / 100) * waveRect.height;
-        const yInWorkshop = (waveRect.top - workshopRect.top) + waveYLocal;
-        const yPct = (yInWorkshop / workshopRect.height) * 100;
-        workshopClip += `${xPct}% ${yPct}%, `;
-      }
-
-      // Bottom edge: extend to full height (wave2 divider covers the transition visually)
-      workshopClip += '100% 100%, 0% 100%';
-
-      workshopSection.style.clipPath = `polygon(${workshopClip})`;
-    }
-
-    // Wave2: also clip workshop bottom independently (in case wave1 block didn't run)
-    if (wave2Div && workshopSection && !wave1Div) {
-      const wave2Rect = wave2Div.getBoundingClientRect();
-      const wsRect = workshopSection.getBoundingClientRect();
-      let wsClip = '0% 0%, 100% 0%, 100% 100%, 0% 100%';
-      workshopSection.style.clipPath = `polygon(${wsClip})`;
-    }
 
     // Only continue if any wave/section is still visible (performance: pause off-screen)
     if (wavesActive) {
