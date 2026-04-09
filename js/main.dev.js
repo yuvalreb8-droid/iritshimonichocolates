@@ -142,112 +142,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ══════════════════════════════════════
      SCROLL-REACTIVE WAVE DIVIDERS
+     Pre-rendered once, animated with CSS transform (compositor-only, 60fps)
      ══════════════════════════════════════ */
   const VW = 1440, VH = 160;
   const AMP = 28;
   const FREQ = 0.8;
-  const SPEED = 0.4;
   const BASE_Y = VH * 0.55;
-
-  let currentOffset = 0, targetOffset = 0;
-
-  window.addEventListener('scroll', () => {
-    targetOffset = window.scrollY * SPEED;
-  }, { passive: true });
-
-  const heroSection = document.getElementById('hero');
-  const workshopSection = document.getElementById('workshop');
-  const wave1Div = document.getElementById('wave1');
-  const wave2Div = document.getElementById('wave2');
-
-  const WAVE_PTS = 60;
-  // Pre-compute x positions
-  const waveXPositions = [];
-  const waveXPcts = [];
-  for (let i = 0; i <= WAVE_PTS; i++) {
-    waveXPositions.push((i / WAVE_PTS) * VW);
-    waveXPcts.push((i / WAVE_PTS) * 100);
-  }
   const TWO_PI_FREQ = Math.PI * 2 * FREQ;
+  const WAVE_PTS = 60;
 
-  function buildWave(phase) {
+  // Build wave path ONCE
+  function buildWave() {
     let d = '';
     for (let i = 0; i <= WAVE_PTS; i++) {
-      const x = waveXPositions[i];
-      const y = BASE_Y + Math.sin((x / VW) * TWO_PI_FREQ + phase) * AMP;
+      const x = (i / WAVE_PTS) * VW;
+      const y = BASE_Y + Math.sin((x / VW) * TWO_PI_FREQ) * AMP;
       d += i === 0 ? `M ${x},${y} ` : `L ${x},${y} `;
     }
     return d;
   }
 
-  // Cache DOM lookups for wave dividers
-  const waveDividers = Array.from(document.querySelectorAll('.wave-divider')).map(divider => ({
-    divider,
-    wavePath: divider.querySelector('.wavePath'),
-    fillPath: divider.querySelector('.fillPath'),
-  }));
+  const wave = buildWave();
 
-  let frameSkip = 0;
-  function animateWaves() {
-    // Throttle to 30fps (skip every other frame) for performance
-    frameSkip = (frameSkip + 1) % 2;
-    if (frameSkip === 1) {
-      if (wavesActive) requestAnimationFrame(animateWaves);
-      else animationRunning = false;
-      return;
+  // Set static paths once — never touched again
+  const waveSvgs = [];
+  document.querySelectorAll('.wave-divider').forEach(divider => {
+    const wavePath = divider.querySelector('.wavePath');
+    const fillPath = divider.querySelector('.fillPath');
+    const svg = divider.querySelector('svg');
+    if (wavePath) wavePath.setAttribute('d', wave);
+    if (fillPath && divider.id === 'wave2') {
+      fillPath.setAttribute('d', wave + ` L ${VW},${VH + 20} L 0,${VH + 20} Z`);
+    } else if (fillPath && divider.id !== 'wave1') {
+      fillPath.setAttribute('d', wave + ` L ${VW},${VH * 2} L 0,${VH * 2} Z`);
     }
+    if (svg) waveSvgs.push(svg);
+  });
 
-    currentOffset += (targetOffset - currentOffset) * 0.12; // doubled lerp to compensate for 30fps
-    const phase = currentOffset * 0.01;
-    const wave = buildWave(phase);
-
-    // Section dividers — stroke + fill for non-wave1 dividers
-    waveDividers.forEach(({ divider, wavePath, fillPath }) => {
-      if (wavePath) wavePath.setAttribute('d', wave);
-      if (fillPath && divider.id === 'wave2') {
-        fillPath.setAttribute('d', wave + ` L ${VW},${VH + 20} L 0,${VH + 20} Z`);
-      } else if (fillPath && divider.id !== 'wave1') {
-        fillPath.setAttribute('d', wave + ` L ${VW},${VH * 2} L 0,${VH * 2} Z`);
-      }
-    });
-
-    // Only continue if any wave/section is still visible (performance: pause off-screen)
-    if (wavesActive) {
-      requestAnimationFrame(animateWaves);
-    } else {
-      animationRunning = false;
+  // Animate with CSS transform on scroll — compositor-only, 60fps guaranteed
+  window.addEventListener('scroll', () => {
+    const shift = -(window.scrollY * 0.15);
+    for (let i = 0; i < waveSvgs.length; i++) {
+      waveSvgs[i].style.transform = `translateX(${shift}px)`;
     }
-  }
-
-  // IntersectionObserver: only run wave animation when waves or relevant sections are visible
-  let wavesActive = false;
-  let animationRunning = false;
-  const visibleElements = new Set();
-
-  function startAnimationIfNeeded() {
-    if (!animationRunning && visibleElements.size > 0) {
-      wavesActive = true;
-      animationRunning = true;
-      requestAnimationFrame(animateWaves);
-    }
-    wavesActive = visibleElements.size > 0;
-  }
-
-  const waveObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        visibleElements.add(entry.target);
-      } else {
-        visibleElements.delete(entry.target);
-      }
-    });
-    startAnimationIfNeeded();
-  }, { rootMargin: '100px' });
-
-  // Observe wave dividers + hero + workshop (all elements that depend on the animation)
-  document.querySelectorAll('.wave-divider').forEach(el => waveObserver.observe(el));
-  if (heroSection) waveObserver.observe(heroSection);
-  if (workshopSection) waveObserver.observe(workshopSection);
+  }, { passive: true });
 
 });
 

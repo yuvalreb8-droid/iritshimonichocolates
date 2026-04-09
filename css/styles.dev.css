@@ -416,6 +416,7 @@ p, h1, h2, h3, h4, li {
   margin-top: -160px;
   z-index: 10;
   pointer-events: none;
+  overflow: hidden;
 }
 
 #wave1 {
@@ -431,10 +432,9 @@ p, h1, h2, h3, h4, li {
   display: block;
   position: absolute;
   bottom: 0;
-  left: 0;
-  width: 100%;
+  left: -100%;
+  width: 300%;
   height: 100%;
-  overflow: visible;
   will-change: transform;
 }
 
@@ -657,7 +657,6 @@ p, h1, h2, h3, h4, li {
   background: #d4b870;
   box-shadow: 0 8px 30px rgba(102, 37, 2, 0.14);
   z-index: 2;
-  animation: blobMorph 10s ease-in-out infinite;
   transition: opacity 0.65s ease-in-out;
 }
 
