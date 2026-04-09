@@ -36,67 +36,54 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── Navbar: touch-linked 1:1 hide/show ── */
-  const navbarHeight = navbar.offsetHeight + 10;
-  const maxOffset = navbarHeight * 1.1;
-  let navOffset = maxOffset;
-  let lastTouchY = 0;
+  /* ── Navbar show/hide ────────────────────────────────────────
+     CSS handles all animation on the compositor thread.
+     JS only toggles .is-visible based on scroll/touch direction.
+     No inline style writes. No rAF loops. No layout reads.
+  ──────────────────────────────────────────────────────────── */
+  let lastScrollY = window.scrollY;
+  let navTicking = false;
   let isTouching = false;
 
-  navbar.style.transform = `translateY(-${maxOffset}px)`;
+  function applyNavDirection() {
+    const y = window.scrollY;
+    if (y < 10)                          navbar.classList.remove('is-visible');
+    else if (y < lastScrollY)            navbar.classList.add('is-visible');
+    else if (y > lastScrollY && y > 80)  navbar.classList.remove('is-visible');
+    lastScrollY = y;
+    navTicking = false;
+  }
+
+  // Mobile: touchmove direction → class toggle (no scroll events)
+  let touchLastY = 0;
+  let touchTicking = false;
 
   window.addEventListener('touchstart', (e) => {
-    if (!e.touches.length) return;
-    lastTouchY = e.touches[0].clientY;
-    isTouching = true;
-    // Force disable transition during drag
-    navbar.style.setProperty('transition', 'none', 'important');
+    if (e.touches.length) {
+      touchLastY = e.touches[0].clientY;
+      isTouching = true;
+    }
   }, { passive: true });
 
   window.addEventListener('touchmove', (e) => {
-    if (!isTouching || !e.touches.length) return;
-    const touchY = e.touches[0].clientY;
-    const delta = lastTouchY - touchY;
-    lastTouchY = touchY;
-
-    // Hide at top of page
-    if (window.scrollY <= 5) {
-      navOffset = maxOffset;
-      navbar.style.transform = `translateY(-${maxOffset}px)`;
-      return;
+    if (!e.touches.length) return;
+    const y = e.touches[0].clientY;
+    const dir = y > touchLastY ? 'up' : 'down';
+    touchLastY = y;
+    if (!touchTicking) {
+      touchTicking = true;
+      requestAnimationFrame(() => {
+        if (window.scrollY < 10)   navbar.classList.remove('is-visible');
+        else if (dir === 'up')     navbar.classList.add('is-visible');
+        else                       navbar.classList.remove('is-visible');
+        touchTicking = false;
+      });
     }
-
-    navOffset = Math.max(0, Math.min(maxOffset, navOffset + delta));
-    navbar.style.transform = `translateY(-${navOffset}px)`;
   }, { passive: true });
 
   window.addEventListener('touchend', () => {
     isTouching = false;
-    // Re-enable transition for snap
-    navbar.style.removeProperty('transition');
-
-    if (navOffset > maxOffset * 0.5) {
-      navbar.style.transition = 'transform 0.52s ease';
-      navOffset = maxOffset;
-    } else {
-      navbar.style.transition = 'transform 0.33s ease';
-      navOffset = 0;
-    }
-    navbar.style.transform = `translateY(-${navOffset}px)`;
   }, { passive: true });
-
-  // Desktop scroll — 1:1 scroll-following, writes batched to rAF
-  let deskLastScrollY = window.scrollY;
-  let deskOffset = -maxOffset;
-  let deskRafId = 0;
-  let snapTimer = null;
-  const hasScrollend = 'onscrollend' in window;
-
-  function renderNavbar() {
-    navbar.style.transition = 'none';
-    navbar.style.transform = `translateY(${Math.round(deskOffset)}px)`;
-    deskRafId = 0;
-  }
 
   /* ── Q&A Cards ── */
   function toggleCard(card) {
@@ -170,49 +157,15 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCachedRects();
   window.addEventListener('resize', updateCachedRects, { passive: true });
 
-  /* ── SINGLE unified scroll listener (no layout reads here — pure math only) ── */
+  /* ── SINGLE scroll listener — wave target + desktop navbar direction ── */
   window.addEventListener('scroll', () => {
-    const y = window.scrollY;
+    targetOffset = window.scrollY * SPEED;
 
-    // Wave animation target
-    targetOffset = y * SPEED;
-
-    // Desktop navbar 1:1 tracking
-    if (!isTouching) {
-      const delta = y - deskLastScrollY;
-      deskLastScrollY = y;
-
-      if (y < 10) {
-        deskOffset = -maxOffset;
-      } else {
-        deskOffset = Math.max(-maxOffset, Math.min(0, deskOffset - delta));
-      }
-
-      if (!deskRafId) deskRafId = requestAnimationFrame(renderNavbar);
-
-      // setTimeout snap fallback for browsers without scrollend
-      if (!hasScrollend) {
-        if (snapTimer) clearTimeout(snapTimer);
-        snapTimer = setTimeout(() => {
-          if (deskRafId) { cancelAnimationFrame(deskRafId); deskRafId = 0; }
-          navbar.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
-          deskOffset = deskOffset < -maxOffset * 0.5 ? -maxOffset : 0;
-          navbar.style.transform = `translateY(${Math.round(deskOffset)}px)`;
-        }, 150);
-      }
+    if (!isTouching && !navTicking) {
+      navTicking = true;
+      requestAnimationFrame(applyNavDirection);
     }
   }, { passive: true });
-
-  // Snap on scroll stop — native scrollend (aligned to render cycle, no race condition)
-  if (hasScrollend) {
-    window.addEventListener('scrollend', () => {
-      if (isTouching) return;
-      if (deskRafId) { cancelAnimationFrame(deskRafId); deskRafId = 0; }
-      navbar.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
-      deskOffset = deskOffset < -maxOffset * 0.5 ? -maxOffset : 0;
-      navbar.style.transform = `translateY(${Math.round(deskOffset)}px)`;
-    }, { passive: true });
-  }
 
   // Cache DOM lookups for wave dividers
   const waveDividers = Array.from(document.querySelectorAll('.wave-divider')).map(divider => ({
