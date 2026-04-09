@@ -36,28 +36,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── Navbar show/hide — GSAP ScrollTrigger ───────────────────
-     ScrollTrigger handles desktop + mobile, including iOS momentum.
-     Navbar stays on its own compositor layer (translate3d).
-     No custom scroll/touch listeners for navbar. No rAF loops.
+  /* ── Navbar show/hide — GSAP ScrollTrigger 1:1 tracking ──────
+     Navbar offset tracks scroll delta pixel-for-pixel via
+     ScrollTrigger's onUpdate. force3D keeps it on the compositor.
+     Handles desktop + mobile + iOS momentum automatically.
   ──────────────────────────────────────────────────────────── */
   gsap.registerPlugin(ScrollTrigger);
 
-  // Start hidden
-  gsap.set(navbar, { y: '-110%', force3D: true });
+  const navH = navbar.offsetHeight;
+  let navY = -navH;
 
-  // Show navbar when scrolling down past 80px (scrub = 1:1 tracking)
+  gsap.set(navbar, { y: navY, force3D: true });
+
   ScrollTrigger.create({
-    start: 80,
+    start: 0,
     end: 'max',
     onUpdate: (self) => {
-      if (self.scroll() < 10) {
-        gsap.set(navbar, { y: '-110%', force3D: true });
-      } else if (self.direction === -1) {
-        gsap.set(navbar, { y: '0%', force3D: true });
+      const scrollY = self.scroll();
+      const velocity = self.getVelocity();
+      const delta = velocity / 60;        // approximate per-frame delta
+
+      if (scrollY < 10) {
+        navY = -navH;
+      } else if (self.direction === 1) {
+        // Scrolling down → hide proportionally
+        navY = Math.max(-navH, Math.min(0, navY - Math.abs(delta)));
       } else {
-        gsap.set(navbar, { y: '-110%', force3D: true });
+        // Scrolling up → reveal proportionally
+        navY = Math.max(-navH, Math.min(0, navY + Math.abs(delta)));
       }
+
+      gsap.set(navbar, { y: Math.round(navY), force3D: true });
     },
   });
 
