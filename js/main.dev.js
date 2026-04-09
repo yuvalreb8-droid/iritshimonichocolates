@@ -59,10 +59,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (isIOS) {
-    /* ── iOS Safari: rAF polling for momentum scroll ──
-       Scroll events stop during momentum scroll, but rAF keeps
-       firing (iOS 15+). With position:sticky the compositor handles
-       repaints natively, so we just need accurate direction detection. */
+    /* ── iOS Safari momentum-scroll fix ──────────────────────────
+       Problem: Safari freezes position:fixed repaints and stops
+       firing scroll events during momentum scroll. The CSS transition
+       then starts at the wrong moment → visible stutter.
+
+       Fix: a rAF polling loop (rAF DOES fire during momentum on
+       iOS 15+) that reads window.scrollY every frame. CSS transition
+       is disabled during the touch/momentum phase so the navbar
+       snaps instantly — no transition = no stutter. Transition is
+       restored once momentum ends (~330 ms of no movement).
+    ──────────────────────────────────────────────────────────── */
     let polling = false;
     let idleFrames = 0;
 
@@ -78,11 +85,16 @@ document.addEventListener('DOMContentLoaded', () => {
         idleFrames++;
       }
 
-      if (idleFrames < 20) requestAnimationFrame(pollScroll);
-      else polling = false;
+      if (idleFrames < 20) {                        // keep polling through momentum
+        requestAnimationFrame(pollScroll);
+      } else {                                       // momentum ended → restore transition
+        navbar.style.transition = '';
+        polling = false;
+      }
     }
 
     window.addEventListener('touchstart', () => {
+      navbar.style.transition = 'none';              // kill transition during touch
       idleFrames = 0;
       if (!polling) {
         polling = true;
@@ -92,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
 
   } else {
-    /* ── Non-iOS: standard scroll event + rAF ── */
+    /* ── Non-iOS: standard scroll event + rAF (works fine) ── */
     window.addEventListener('scroll', () => {
       if (!ticking) { requestAnimationFrame(applyNavState); ticking = true; }
     }, { passive: true });
