@@ -85,16 +85,10 @@ p, h1, h2, h3, h4, li {
   z-index: 1000;
   background: #662502;
   overflow: visible;
-  transform: translate3d(0, -110%, 0);
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
   contain: layout paint;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-}
-
-.navbar.is-visible {
-  transform: translate3d(0, 0, 0);
 }
 
 .navbar__inner {

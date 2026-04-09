@@ -36,27 +36,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── Navbar show/hide ────────────────────────────────────────
-     CSS handles all animation on the compositor thread.
-     JS only toggles .is-visible based on scroll/touch direction.
-     No inline style writes. No rAF loops. No layout reads.
+  /* ── Navbar show/hide — 1:1 scroll tracking ─────────────────
+     Navbar offset follows scroll delta pixel-for-pixel.
+     Single rAF write per frame, translate3d for compositor layer.
+     No layout reads in scroll/touch handlers. No rAF loop.
   ──────────────────────────────────────────────────────────── */
+  const navH = navbar.offsetHeight;
+  let navOffset = -navH;
   let lastScrollY = window.scrollY;
   let navTicking = false;
   let isTouching = false;
 
-  function applyNavDirection() {
-    const y = window.scrollY;
-    if (y < 10)                          navbar.classList.remove('is-visible');
-    else if (y < lastScrollY)            navbar.classList.add('is-visible');
-    else if (y > lastScrollY && y > 80)  navbar.classList.remove('is-visible');
-    lastScrollY = y;
+  // Initial hidden state
+  navbar.style.transform = `translate3d(0, ${navOffset}px, 0)`;
+
+  function renderNav() {
+    navbar.style.transform = `translate3d(0, ${Math.round(navOffset)}px, 0)`;
     navTicking = false;
   }
 
-  // Mobile: touchmove direction → class toggle (no scroll events)
+  // Mobile: touchmove delta → 1:1 offset tracking
   let touchLastY = 0;
-  let touchTicking = false;
 
   window.addEventListener('touchstart', (e) => {
     if (e.touches.length) {
@@ -68,16 +68,18 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('touchmove', (e) => {
     if (!e.touches.length) return;
     const y = e.touches[0].clientY;
-    const dir = y > touchLastY ? 'up' : 'down';
+    const delta = touchLastY - y;          // positive = scrolling down
     touchLastY = y;
-    if (!touchTicking) {
-      touchTicking = true;
-      requestAnimationFrame(() => {
-        if (window.scrollY < 10)   navbar.classList.remove('is-visible');
-        else if (dir === 'up')     navbar.classList.add('is-visible');
-        else                       navbar.classList.remove('is-visible');
-        touchTicking = false;
-      });
+
+    if (window.scrollY < 10) {
+      navOffset = -navH;
+    } else {
+      navOffset = Math.max(-navH, Math.min(0, navOffset - delta));
+    }
+
+    if (!navTicking) {
+      navTicking = true;
+      requestAnimationFrame(renderNav);
     }
   }, { passive: true });
 
@@ -157,13 +159,25 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCachedRects();
   window.addEventListener('resize', updateCachedRects, { passive: true });
 
-  /* ── SINGLE scroll listener — wave target + desktop navbar direction ── */
+  /* ── SINGLE scroll listener — wave target + desktop navbar 1:1 ── */
   window.addEventListener('scroll', () => {
-    targetOffset = window.scrollY * SPEED;
+    const y = window.scrollY;
+    targetOffset = y * SPEED;
 
-    if (!isTouching && !navTicking) {
-      navTicking = true;
-      requestAnimationFrame(applyNavDirection);
+    if (!isTouching) {
+      const delta = y - lastScrollY;
+      lastScrollY = y;
+
+      if (y < 10) {
+        navOffset = -navH;
+      } else {
+        navOffset = Math.max(-navH, Math.min(0, navOffset - delta));
+      }
+
+      if (!navTicking) {
+        navTicking = true;
+        requestAnimationFrame(renderNav);
+      }
     }
   }, { passive: true });
 
