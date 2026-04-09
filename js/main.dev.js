@@ -85,33 +85,34 @@ document.addEventListener('DOMContentLoaded', () => {
     navbar.style.transform = `translateY(-${navOffset}px)`;
   }, { passive: true });
 
-  // Desktop scroll — CSS transition handles animation on compositor thread
+  // Desktop scroll — 1:1 scroll-following with compositor isolation
   let deskLastScrollY = window.scrollY;
-  let deskTicking = false;
-  let navHidden = true;
-
-  function updateDesktopNavbar() {
-    const y = window.scrollY;
-    const shouldHide = y < 10 || (y > deskLastScrollY && y > 60);
-
-    if (shouldHide !== navHidden) {
-      navHidden = shouldHide;
-      navbar.style.transition = 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
-      navbar.style.transform = shouldHide
-        ? `translateY(-${maxOffset}px)`
-        : 'translateY(0)';
-    }
-
-    deskLastScrollY = y;
-    deskTicking = false;
-  }
+  let deskOffset = -maxOffset;
+  let snapTimer = null;
 
   window.addEventListener('scroll', () => {
     if (isTouching) return;
-    if (!deskTicking) {
-      requestAnimationFrame(updateDesktopNavbar);
-      deskTicking = true;
+    const y = window.scrollY;
+    const delta = y - deskLastScrollY;
+    deskLastScrollY = y;
+
+    if (snapTimer) { clearTimeout(snapTimer); snapTimer = null; }
+
+    if (y < 10) {
+      deskOffset = -maxOffset;
+    } else {
+      deskOffset = Math.max(-maxOffset, Math.min(0, deskOffset - delta));
     }
+
+    navbar.style.transition = 'none';
+    navbar.style.transform = `translateY(${deskOffset}px)`;
+
+    // Snap to nearest state when scrolling stops
+    snapTimer = setTimeout(() => {
+      navbar.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+      deskOffset = deskOffset < -maxOffset * 0.5 ? -maxOffset : 0;
+      navbar.style.transform = `translateY(${deskOffset}px)`;
+    }, 150);
   }, { passive: true });
 
   /* ── Q&A Cards ── */
