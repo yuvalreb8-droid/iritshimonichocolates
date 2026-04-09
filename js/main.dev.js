@@ -36,76 +36,39 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── Navbar show/hide — 1:1 tracking ─────────────────────────
-     Desktop: GSAP ScrollTrigger (scroll events work fine).
-     Mobile: dedicated touchmove handlers (bypass iOS Safari's
-     throttled scroll events during momentum scroll).
-     Both share navY offset + gsap.set for compositor writes.
+  /* ── Lenis + GSAP — smooth scroll + navbar 1:1 tracking ──────
+     Lenis takes over scroll on all devices (syncTouch: true for iOS).
+     Provides consistent scroll events that bypass Safari momentum
+     throttling. One unified system for desktop + mobile.
   ──────────────────────────────────────────────────────────── */
-  gsap.registerPlugin(ScrollTrigger);
+  const lenis = new Lenis({ syncTouch: true });
 
+  gsap.registerPlugin(ScrollTrigger);
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+  gsap.ticker.lagSmoothing(0);
+
+  // Navbar 1:1 tracking via Lenis scroll callback
   const navH = navbar.offsetHeight;
   let navY = -navH;
-  let isTouching = false;
+  let prevScroll = window.scrollY;
 
   gsap.set(navbar, { y: navY, force3D: true });
 
-  // ── Desktop: GSAP ScrollTrigger 1:1 ──
-  ScrollTrigger.create({
-    start: 0,
-    end: 'max',
-    onUpdate: (self) => {
-      if (isTouching) return;              // mobile touch handlers take over
-      const scrollY = self.scroll();
-      const velocity = self.getVelocity();
-      const delta = velocity / 60;
+  lenis.on('scroll', ({ scroll, direction }) => {
+    const delta = Math.abs(scroll - prevScroll);
+    prevScroll = scroll;
 
-      if (scrollY < 10) {
-        navY = -navH;
-      } else if (self.direction === 1) {
-        navY = Math.max(-navH, Math.min(0, navY - Math.abs(delta)));
-      } else {
-        navY = Math.max(-navH, Math.min(0, navY + Math.abs(delta)));
-      }
-
-      gsap.set(navbar, { y: Math.round(navY), force3D: true });
-    },
-  });
-
-  // ── Mobile: touchmove 1:1 tracking (bypasses iOS scroll throttle) ──
-  let touchLastY = 0;
-  let touchRafId = 0;
-
-  function renderNavTouch() {
-    gsap.set(navbar, { y: Math.round(navY), force3D: true });
-    touchRafId = 0;
-  }
-
-  window.addEventListener('touchstart', (e) => {
-    if (e.touches.length) {
-      touchLastY = e.touches[0].clientY;
-      isTouching = true;
-    }
-  }, { passive: true });
-
-  window.addEventListener('touchmove', (e) => {
-    if (!e.touches.length) return;
-    const y = e.touches[0].clientY;
-    const delta = touchLastY - y;
-    touchLastY = y;
-
-    if (window.scrollY < 10) {
+    if (scroll < 10) {
       navY = -navH;
-    } else {
+    } else if (direction === 1) {
       navY = Math.max(-navH, Math.min(0, navY - delta));
+    } else if (direction === -1) {
+      navY = Math.max(-navH, Math.min(0, navY + delta));
     }
 
-    if (!touchRafId) touchRafId = requestAnimationFrame(renderNavTouch);
-  }, { passive: true });
-
-  window.addEventListener('touchend', () => {
-    isTouching = false;
-  }, { passive: true });
+    gsap.set(navbar, { y: Math.round(navY), force3D: true });
+  });
 
   /* ── Q&A Cards ── */
   function toggleCard(card) {
