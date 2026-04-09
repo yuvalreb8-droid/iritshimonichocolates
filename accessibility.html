@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&family=Secular+One&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=28">
+  <link rel="stylesheet" href="css/styles.css?v=118">
   <style>
     .accessibility-page {
       background: #fffff2;
@@ -40,7 +40,6 @@
       color: #7C3913;
       margin-top: 2.5rem;
       margin-bottom: 1rem;
-      text-transform: uppercase;
       letter-spacing: 0.05em;
     }
     .accessibility-page p {
@@ -87,9 +86,37 @@
     .accessibility-page .highlight-box p {
       margin: 0;
     }
+    .lang-toggle {
+      display: inline-flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+    .lang-toggle button {
+      background: none;
+      border: 2px solid #7C3913;
+      border-radius: 8px;
+      padding: 0.4rem 1.2rem;
+      font-family: 'Heebo', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #7C3913;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .lang-toggle button.active {
+      background: #7C3913;
+      color: #fffff2;
+    }
+    .lang-toggle button:hover:not(.active) {
+      background: rgba(124, 57, 19, 0.1);
+    }
+    .lang-section { display: none; }
+    .lang-section.active { display: block; }
   </style>
 </head>
 <body>
+
+  <a href="#main-content" class="skip-link">דלג לתוכן הראשי</a>
 
   <!-- Navigation Bar -->
   <nav class="navbar">
@@ -112,70 +139,155 @@
 
       <a href="index.html" class="back-link">← חזרה לאתר הראשי</a>
 
-      <h1>הצהרת נגישות</h1>
-      <p class="applies-to">הצהרה זו חלה על אתר <strong>שוקולדות – אירית שמעוני</strong>.</p>
-
-      <h2>Our Commitment</h2>
-      <p>Irit Shimoni Chocolates is committed to ensuring our services are accessible to people with disabilities. We aim to conform with WCAG 2.2 Level AA. This accessibility statement forms an integral part of our Terms of Use.</p>
-
-      <h2>Accessibility Features</h2>
-      <p>You should be able to:</p>
-      <ul>
-        <li>Zoom in up to 200% without loss of information or functionality</li>
-        <li>All decorative images are hidden from screen readers</li>
-        <li>Page uses a logical heading structure (H1 → H2)</li>
-        <li>Interactive elements include accessible ARIA labels</li>
-        <li>Change colors, contrast levels, and fonts</li>
-        <li>Navigate the website with just a keyboard</li>
-        <li>Listen to the website using a screen reader</li>
-        <li>Stop moving images</li>
-      </ul>
-
-      <h2>Compatibility with Assistive Technology</h2>
-      <p>Our website is designed to be compatible with the following assistive technologies:</p>
-      <ul>
-        <li><strong>Mobile Accessibility Features:</strong> AssistiveTouch (iOS)</li>
-        <li><strong>Screen Magnification:</strong> Magnification (Android), Magnifier (Windows) and Zoom (macOS/iOS)</li>
-        <li><strong>Screen Readers:</strong> NVDA (Windows), JAWS (Windows) and VoiceOver (macOS/iOS)</li>
-        <li><strong>Voice Recognition &amp; Control:</strong> Dragon NaturallySpeaking (Windows/Mac)</li>
-      </ul>
-
-      <h2>Conformance Status</h2>
-      <p><strong>Status:</strong> Partially compliant with WCAG 2.2 Level AA</p>
-      <p>We conducted our most recent accessibility evaluation on 30/03/2026.</p>
-
-      <h2>Non-Accessible Content</h2>
-      <p>We are actively working to address any accessibility issues as part of an ongoing plan to improve accessibility. We will update this statement when limitations are identified and resolved.</p>
-
-      <h2>Israeli Accessibility Standard IS 5568</h2>
-      <div class="highlight-box">
-        <p>This website is built in compliance with Israeli Standard IS 5568, which is based on WCAG 2.0 Level AA. IS 5568 is the official Israeli web accessibility standard mandated under the Equal Rights for Persons with Disabilities Law. We are committed to ensuring that our website is accessible to all users, including people with disabilities, in accordance with Israeli law.</p>
+      <!-- Language toggle -->
+      <div class="lang-toggle">
+        <button class="active" data-lang="he" aria-label="עברית">עברית</button>
+        <button data-lang="en" aria-label="English">English</button>
       </div>
 
-      <h2>Preparation of This Statement</h2>
-      <p>This statement was prepared on 30 March 2026 and is reviewed annually or when we make significant service changes.</p>
-      <p>We maintain records of accessibility feedback and our responses for regulatory compliance.</p>
+      <!-- ═══════════════════════════════
+           HEBREW VERSION
+           ═══════════════════════════════ -->
+      <div class="lang-section active" id="lang-he">
 
-      <h2>How We Test</h2>
-      <p>We evaluate accessibility using:</p>
-      <ul>
-        <li>Self-assessment conducted in accordance with EAA requirements</li>
-        <li>Ongoing monitoring and regular accessibility reviews</li>
-        <li>Evaluated against Israeli Standard IS 5568 (based on WCAG 2.0 AA)</li>
-      </ul>
+        <h1>הצהרת נגישות</h1>
+        <p class="applies-to">הצהרה זו חלה על אתר <strong>שוקולדות – אירית שמעוני</strong>.</p>
 
-      <h2>Feedback and Contact Information</h2>
-      <p>Please let us know if you experience accessibility barriers using our services or need information in an alternative format.</p>
-      <p>You can contact us by telephone:</p>
-      <p>
-        <strong>Irit Shimoni Chocolates</strong><br>
-        Israel<br>
-        Phone: <a href="tel:0528225999">0528225999</a>
-      </p>
+        <h2>תקן ישראלי IS 5568</h2>
+        <div class="highlight-box">
+          <p>אתר זה נבנה בהתאם לדרישות <strong>התקן הישראלי IS 5568</strong>, המבוסס על הנחיות הנגישות לתכני אינטרנט WCAG 2.0 ברמת AA. תקן IS 5568 הוא תקן הנגישות הרשמי של מדינת ישראל בהתאם לחוק שוויון זכויות לאנשים עם מוגבלות.</p>
+        </div>
 
-      <h2>Enforcement</h2>
-      <p>If you are not satisfied with our response, you can contact the relevant enforcement authority. In Israel, accessibility complaints may be directed to the Commission for Equal Rights of Persons with Disabilities (נציבות שוויון זכויות לאנשים עם מוגבלות).</p>
-      <p><em>This Accessibility Statement was created using Termly's Accessibility Statement Generator.</em></p>
+        <h2>רמת התאמה</h2>
+        <p><strong>סטטוס:</strong> תואם חלקית לתקן IS 5568 (WCAG 2.0 רמה AA).</p>
+        <p>הערכת הנגישות האחרונה בוצעה בתאריך 30/03/2026.</p>
+
+        <h2>מה עשינו כדי להנגיש את האתר</h2>
+        <p>האתר תוכנן ונבנה מהיסוד עם דגש על נגישות מלאה. אמצעי הנגישות שהוטמעו באתר:</p>
+        <ul>
+          <li><strong>תמונות:</strong> לכל תמונה באתר טקסט חלופי (alt) מתאר. תמונות דקורטיביות מסומנות כך שקוראי מסך מתעלמים מהן.</li>
+          <li><strong>ניגודיות צבעים:</strong> יחס ניגודיות של לפחות 4.5:1 לטקסט רגיל ו-3:1 לטקסט גדול, בהתאם לדרישות WCAG AA.</li>
+          <li><strong>ניווט מקלדת:</strong> ניתן לנווט בכל האתר באמצעות מקלדת בלבד (Tab, Enter, רווח). כל האלמנטים האינטראקטיביים נגישים למקלדת.</li>
+          <li><strong>מבנה כותרות:</strong> האתר משתמש במבנה כותרות הגיוני (H1 → H2) ללא דילוג על רמות.</li>
+          <li><strong>טפסים:</strong> כל שדות הטופס מלווים בתוויות (labels) מקושרות כראוי.</li>
+          <li><strong>קישור דילוג:</strong> קישור "דלג לתוכן הראשי" מופיע בתחילת כל עמוד עבור משתמשי מקלדת וקוראי מסך.</li>
+          <li><strong>מחווני פוקוס:</strong> כל האלמנטים האינטראקטיביים מציגים מחוון פוקוס ברור ונראה.</li>
+          <li><strong>הגדלת טקסט:</strong> ניתן להגדיל את הטקסט עד 200% מבלי לאבד תוכן או פונקציונליות.</li>
+          <li><strong>תאימות RTL:</strong> האתר בנוי מימין לשמאל בהתאם לשפה העברית.</li>
+        </ul>
+
+        <h2>תאימות לטכנולוגיות מסייעות</h2>
+        <p>האתר תוכנן לעבוד עם הטכנולוגיות המסייעות הבאות:</p>
+        <ul>
+          <li><strong>קוראי מסך:</strong> NVDA (Windows), JAWS (Windows), VoiceOver (macOS/iOS)</li>
+          <li><strong>הגדלת מסך:</strong> Magnification (Android), Magnifier (Windows), Zoom (macOS/iOS)</li>
+          <li><strong>שליטה קולית:</strong> Dragon NaturallySpeaking (Windows/Mac)</li>
+          <li><strong>נגישות ניידים:</strong> AssistiveTouch (iOS), TalkBack (Android)</li>
+        </ul>
+
+        <h2>מגבלות ידועות</h2>
+        <p>אנו פועלים באופן מתמשך לשפר את נגישות האתר. מגבלות ידועות כרגע:</p>
+        <ul>
+          <li>גלריית התמונות בקטע הסדנה עשויה שלא להיות נגישה באופן מלא לקוראי מסך.</li>
+          <li>אנימציות הגלים בין הסקשנים הן דקורטיביות בלבד ומוסתרות מטכנולוגיות מסייעות.</li>
+        </ul>
+        <p>אנו עובדים לטפל בבעיות אלו ונעדכן הצהרה זו בהתאם.</p>
+
+        <h2>רכז/ת נגישות — פרטי קשר</h2>
+        <p>לכל שאלה, בעיה או בקשה בנושא נגישות האתר, ניתן לפנות אלינו:</p>
+        <p>
+          <strong>אירית שמעוני</strong> — רכזת נגישות<br>
+          טלפון: <a href="tel:0528225999">052-822-5999</a><br>
+          אימייל: <a href="mailto:iritshimoni@gmail.com">iritshimoni@gmail.com</a>
+        </p>
+
+        <h2>משוב ודיווח על בעיות נגישות</h2>
+        <p>נתקלתם בבעיית נגישות באתר? נשמח לשמוע ולטפל. ניתן לדווח באחת מהדרכים הבאות:</p>
+        <ul>
+          <li>בטלפון: <a href="tel:0528225999">052-822-5999</a></li>
+          <li>באימייל: <a href="mailto:iritshimoni@gmail.com">iritshimoni@gmail.com</a> — נא לציין "בעיית נגישות" בנושא ההודעה</li>
+          <li>בוואטסאפ: <a href="https://wa.me/972528225999" target="_blank" rel="noopener">052-822-5999</a></li>
+        </ul>
+
+        <h2>אכיפה</h2>
+        <p>אם אינכם מרוצים מתגובתנו, ניתן לפנות לנציבות שוויון זכויות לאנשים עם מוגבלות.</p>
+
+        <h2>עדכון ההצהרה</h2>
+        <p>הצהרה זו עודכנה לאחרונה בתאריך <strong>01/04/2026</strong> ונבדקת מחדש לפחות אחת לשנה או בעקבות שינויים מהותיים באתר.</p>
+
+      </div>
+
+      <!-- ═══════════════════════════════
+           ENGLISH VERSION
+           ═══════════════════════════════ -->
+      <div class="lang-section" id="lang-en" dir="ltr" lang="en">
+
+        <h1>Accessibility Statement</h1>
+        <p class="applies-to">This statement applies to the website <strong>Chocoladot – Irit Shimoni</strong>.</p>
+
+        <h2>Israeli Standard IS 5568</h2>
+        <div class="highlight-box" style="border-right: none; border-left: 4px solid #7C3913; border-radius: 8px 0 0 8px;">
+          <p>This website was built in compliance with <strong>Israeli Standard IS 5568</strong>, based on the Web Content Accessibility Guidelines (WCAG) 2.0 Level AA. IS 5568 is the official Israeli web accessibility standard mandated under the Equal Rights for Persons with Disabilities Law.</p>
+        </div>
+
+        <h2>Conformance Level</h2>
+        <p><strong>Status:</strong> Partially compliant with IS 5568 (WCAG 2.0 Level AA).</p>
+        <p>Our most recent accessibility evaluation was conducted on 30/03/2026.</p>
+
+        <h2>Accessibility Measures Implemented</h2>
+        <p>This website was designed and built from the ground up with accessibility in mind. The following measures have been implemented:</p>
+        <ul>
+          <li><strong>Images:</strong> All images have descriptive alt text. Decorative images are hidden from screen readers.</li>
+          <li><strong>Color contrast:</strong> Minimum 4.5:1 ratio for normal text and 3:1 for large text, per WCAG AA requirements.</li>
+          <li><strong>Keyboard navigation:</strong> The entire site can be navigated using a keyboard only (Tab, Enter, Space). All interactive elements are keyboard accessible.</li>
+          <li><strong>Heading structure:</strong> Logical heading hierarchy (H1 → H2) with no skipped levels.</li>
+          <li><strong>Forms:</strong> All form fields have properly associated labels.</li>
+          <li><strong>Skip link:</strong> A "skip to main content" link appears at the beginning of each page for keyboard and screen reader users.</li>
+          <li><strong>Focus indicators:</strong> All interactive elements display a clearly visible focus indicator.</li>
+          <li><strong>Text resizing:</strong> Text can be enlarged up to 200% without loss of content or functionality.</li>
+          <li><strong>RTL compatibility:</strong> The site is built right-to-left to match the Hebrew language.</li>
+        </ul>
+
+        <h2>Assistive Technology Compatibility</h2>
+        <p>This website is designed to work with the following assistive technologies:</p>
+        <ul>
+          <li><strong>Screen readers:</strong> NVDA (Windows), JAWS (Windows), VoiceOver (macOS/iOS)</li>
+          <li><strong>Screen magnification:</strong> Magnification (Android), Magnifier (Windows), Zoom (macOS/iOS)</li>
+          <li><strong>Voice control:</strong> Dragon NaturallySpeaking (Windows/Mac)</li>
+          <li><strong>Mobile accessibility:</strong> AssistiveTouch (iOS), TalkBack (Android)</li>
+        </ul>
+
+        <h2>Known Limitations</h2>
+        <p>We are continuously working to improve accessibility. Currently known limitations:</p>
+        <ul>
+          <li>The image gallery in the workshop section may not be fully accessible to screen readers.</li>
+          <li>Wave animations between sections are decorative only and hidden from assistive technologies.</li>
+        </ul>
+        <p>We are working to address these issues and will update this statement accordingly.</p>
+
+        <h2>Accessibility Coordinator — Contact Details</h2>
+        <p>For any questions, issues, or requests regarding the accessibility of this website, please contact us:</p>
+        <p>
+          <strong>Irit Shimoni</strong> — Accessibility Coordinator<br>
+          Phone: <a href="tel:0528225999">052-822-5999</a><br>
+          Email: <a href="mailto:iritshimoni@gmail.com">iritshimoni@gmail.com</a>
+        </p>
+
+        <h2>Feedback &amp; Reporting Accessibility Issues</h2>
+        <p>Encountered an accessibility issue on our site? We'd love to hear from you. You can report it via:</p>
+        <ul>
+          <li>Phone: <a href="tel:0528225999">052-822-5999</a></li>
+          <li>Email: <a href="mailto:iritshimoni@gmail.com">iritshimoni@gmail.com</a> — please include "Accessibility Issue" in the subject line</li>
+          <li>WhatsApp: <a href="https://wa.me/972528225999" target="_blank" rel="noopener">052-822-5999</a></li>
+        </ul>
+
+        <h2>Enforcement</h2>
+        <p>If you are not satisfied with our response, you may contact the Commission for Equal Rights of Persons with Disabilities (Israel).</p>
+
+        <h2>Statement Updates</h2>
+        <p>This statement was last updated on <strong>01/04/2026</strong> and is reviewed at least annually or following significant changes to the website.</p>
+
+      </div>
 
     </div>
   </main>
@@ -183,10 +295,24 @@
   <!-- FOOTER -->
   <footer class="footer">
     <div class="container">
+      <p>שוקולדות | אירית שמעוני &bull; ח.פ. XXXXXXXXX &bull; ישראל</p>
+      <p>טלפון: <a href="tel:0528225999">052-822-5999</a> &bull; <a href="mailto:iritshimoni@gmail.com">iritshimoni@gmail.com</a></p>
+      <p><a href="accessibility.html">הצהרת נגישות</a></p>
       <p>&copy; 2026 שוקולדות | אירית שמעוני. כל הזכויות שמורות.</p>
     </div>
   </footer>
 
-  <script src="js/main.js?v=9"></script>
+  <script>
+    // Language toggle
+    document.querySelectorAll('.lang-toggle button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-toggle button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.lang-section').forEach(s => s.classList.remove('active'));
+        document.getElementById('lang-' + lang).classList.add('active');
+      });
+    });
+  </script>
 </body>
 </html>
