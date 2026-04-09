@@ -90,38 +90,13 @@ document.addEventListener('DOMContentLoaded', () => {
   let deskOffset = -maxOffset;
   let deskRafId = 0;
   let snapTimer = null;
+  const hasScrollend = 'onscrollend' in window;
 
   function renderNavbar() {
     navbar.style.transition = 'none';
     navbar.style.transform = `translateY(${Math.round(deskOffset)}px)`;
     deskRafId = 0;
   }
-
-  window.addEventListener('scroll', () => {
-    if (isTouching) return;
-    const y = window.scrollY;
-    const delta = y - deskLastScrollY;
-    deskLastScrollY = y;
-
-    if (snapTimer) { clearTimeout(snapTimer); snapTimer = null; }
-
-    if (y < 10) {
-      deskOffset = -maxOffset;
-    } else {
-      deskOffset = Math.max(-maxOffset, Math.min(0, deskOffset - delta));
-    }
-
-    // Batch DOM write to next frame — never during scroll event
-    if (!deskRafId) deskRafId = requestAnimationFrame(renderNavbar);
-
-    // Snap when scrolling stops
-    snapTimer = setTimeout(() => {
-      if (deskRafId) { cancelAnimationFrame(deskRafId); deskRafId = 0; }
-      navbar.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
-      deskOffset = deskOffset < -maxOffset * 0.5 ? -maxOffset : 0;
-      navbar.style.transform = `translateY(${Math.round(deskOffset)}px)`;
-    }, 150);
-  }, { passive: true });
 
   /* ── Q&A Cards ── */
   function toggleCard(card) {
@@ -150,10 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const BASE_Y = VH * 0.55;
 
   let currentOffset = 0, targetOffset = 0;
-
-  window.addEventListener('scroll', () => {
-    targetOffset = window.scrollY * SPEED;
-  }, { passive: true });
 
   const heroSection = document.getElementById('hero');
   const workshopSection = document.getElementById('workshop');
@@ -197,8 +168,51 @@ document.addEventListener('DOMContentLoaded', () => {
     if (workshopSection) cachedRects.workshop = workshopSection.getBoundingClientRect();
   }
   updateCachedRects();
-  window.addEventListener('scroll', updateCachedRects, { passive: true });
   window.addEventListener('resize', updateCachedRects, { passive: true });
+
+  /* ── SINGLE unified scroll listener (no layout reads here — pure math only) ── */
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+
+    // Wave animation target
+    targetOffset = y * SPEED;
+
+    // Desktop navbar 1:1 tracking
+    if (!isTouching) {
+      const delta = y - deskLastScrollY;
+      deskLastScrollY = y;
+
+      if (y < 10) {
+        deskOffset = -maxOffset;
+      } else {
+        deskOffset = Math.max(-maxOffset, Math.min(0, deskOffset - delta));
+      }
+
+      if (!deskRafId) deskRafId = requestAnimationFrame(renderNavbar);
+
+      // setTimeout snap fallback for browsers without scrollend
+      if (!hasScrollend) {
+        if (snapTimer) clearTimeout(snapTimer);
+        snapTimer = setTimeout(() => {
+          if (deskRafId) { cancelAnimationFrame(deskRafId); deskRafId = 0; }
+          navbar.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+          deskOffset = deskOffset < -maxOffset * 0.5 ? -maxOffset : 0;
+          navbar.style.transform = `translateY(${Math.round(deskOffset)}px)`;
+        }, 150);
+      }
+    }
+  }, { passive: true });
+
+  // Snap on scroll stop — native scrollend (aligned to render cycle, no race condition)
+  if (hasScrollend) {
+    window.addEventListener('scrollend', () => {
+      if (isTouching) return;
+      if (deskRafId) { cancelAnimationFrame(deskRafId); deskRafId = 0; }
+      navbar.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+      deskOffset = deskOffset < -maxOffset * 0.5 ? -maxOffset : 0;
+      navbar.style.transform = `translateY(${Math.round(deskOffset)}px)`;
+    }, { passive: true });
+  }
 
   // Cache DOM lookups for wave dividers
   const waveDividers = Array.from(document.querySelectorAll('.wave-divider')).map(divider => ({
@@ -216,6 +230,9 @@ document.addEventListener('DOMContentLoaded', () => {
       else animationRunning = false;
       return;
     }
+
+    // Read phase — layout reads before any DOM writes (no forced reflow)
+    updateCachedRects();
 
     currentOffset += (targetOffset - currentOffset) * 0.12; // doubled lerp to compensate for 30fps
     const phase = currentOffset * 0.01;
