@@ -36,31 +36,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── Navbar: production pattern (class toggle + RAF debounce) ── */
+  /* ── Navbar: class toggle hide/show ── */
   let lastScrollY = window.scrollY;
   let ticking = false;
+  let lastTouchY = 0;
+  let touchAccum = 0;
+  const TOUCH_THRESHOLD = 15;
 
   // Start hidden
   navbar.classList.add('is-hidden');
 
+  // --- Desktop: scroll-based (works fine on Chrome/Firefox/Edge) ---
   function updateNavbar() {
     const currentScrollY = window.scrollY;
     const distance = Math.abs(currentScrollY - lastScrollY);
 
-    // Ignore tiny movements (finger jitter)
     if (distance < 5) {
       ticking = false;
       return;
     }
 
     if (currentScrollY <= 5) {
-      // At top of page — hide
       navbar.classList.add('is-hidden');
     } else if (currentScrollY > lastScrollY && currentScrollY > 60) {
-      // Scrolling down — hide
       navbar.classList.add('is-hidden');
     } else {
-      // Scrolling up — show
       navbar.classList.remove('is-hidden');
     }
 
@@ -72,6 +72,35 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!ticking) {
       requestAnimationFrame(updateNavbar);
       ticking = true;
+    }
+  }, { passive: true });
+
+  // --- Mobile: touch-based (fires reliably during iOS momentum scroll) ---
+  window.addEventListener('touchstart', (e) => {
+    if (!e.touches.length) return;
+    lastTouchY = e.touches[0].clientY;
+    touchAccum = 0;
+  }, { passive: true });
+
+  window.addEventListener('touchmove', (e) => {
+    if (!e.touches.length) return;
+    const touchY = e.touches[0].clientY;
+    const delta = lastTouchY - touchY; // positive = scrolling down
+    lastTouchY = touchY;
+    touchAccum += delta;
+
+    if (window.scrollY <= 5) {
+      navbar.classList.add('is-hidden');
+      touchAccum = 0;
+      return;
+    }
+
+    if (touchAccum > TOUCH_THRESHOLD) {
+      navbar.classList.add('is-hidden');
+      touchAccum = 0;
+    } else if (touchAccum < -TOUCH_THRESHOLD) {
+      navbar.classList.remove('is-hidden');
+      touchAccum = 0;
     }
   }, { passive: true });
 
