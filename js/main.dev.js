@@ -195,7 +195,7 @@ function initBlobCarousel(stackId, btnId, images) {
   back.active.style.opacity    = '1';
   back.inactive.style.opacity  = '0';
 
-  function crossfade(blob, nextSrc, afterSrc) {
+  function crossfade(blob, nextSrc, afterSrc, onDone) {
     // Load the incoming image into the inactive layer (already preloaded, instant)
     blob.inactive.src = nextSrc;
 
@@ -203,36 +203,42 @@ function initBlobCarousel(stackId, btnId, images) {
     blob.inactive.style.opacity = '1';
     blob.active.style.opacity   = '0';
 
-    // After transition: swap layer roles, seed the next incoming image
-    setTimeout(() => {
+    // After transition completes: swap roles (no setTimeout, no main thread blocking)
+    blob.inactive.addEventListener('transitionend', function handler(e) {
+      if (e.propertyName !== 'opacity') return;
+      blob.inactive.removeEventListener('transitionend', handler);
+
       const prevActive   = blob.active;
       const prevInactive = blob.inactive;
+      blob.active   = prevInactive;
+      blob.inactive = prevActive;
 
-      blob.active   = prevInactive;  // new active = was incoming
-      blob.inactive = prevActive;    // new inactive = was active
-
-      // Seed next-next image into the now-inactive layer (invisible)
-      blob.inactive.src     = afterSrc;
+      blob.inactive.src = afterSrc;
       blob.inactive.style.opacity = '0';
-    }, 700); // matches CSS transition duration (0.65s) + small buffer
+
+      if (onDone) onDone();
+    });
   }
 
   function advance() {
     if (busy) return;
     busy = true;
 
-    const next          = (current + 1) % images.length;
-    const afterNext     = (current + 2) % images.length;
+    const next           = (current + 1) % images.length;
+    const afterNext      = (current + 2) % images.length;
     const afterAfterNext = (current + 3) % images.length;
 
-    // Crossfade both blobs simultaneously
-    crossfade(front, images[next],      images[afterNext]);
-    crossfade(back,  images[afterNext], images[afterAfterNext]);
+    // Track when both blobs finish
+    let done = 0;
+    function onBlobDone() {
+      done++;
+      if (done >= 2) busy = false;
+    }
+
+    crossfade(front, images[next],      images[afterNext],      onBlobDone);
+    crossfade(back,  images[afterNext],  images[afterAfterNext], onBlobDone);
 
     current = next;
-
-    // Unlock after transition fully completes
-    setTimeout(() => { busy = false; }, 750);
   }
 
   // Single event path for both click on stack and button
