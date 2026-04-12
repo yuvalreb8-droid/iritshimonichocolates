@@ -214,8 +214,21 @@ p, h1, h2, h3, h4, li {
   padding-bottom: clamp(40px, 8vw, 100px);
   margin-top: 0;
   padding-top: 4rem;
-  z-index: 2;
+  z-index: 1;
   overflow: visible;
+}
+
+/* Thin clip wrapper — clips only 200px instead of the entire hero/workshop sections.
+   Sits between hero and wave1 in the DOM. Hero dark brown above wave, transparent below. */
+.hero-clip-edge {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  height: 200px;
+  margin-top: -200px;
+  background: #662502;
+  pointer-events: none;
+  contain: layout style paint;
 }
 
 /* Full-width concave arc band */
@@ -1307,6 +1320,11 @@ p, h1, h2, h3, h4, li {
   .wave-divider {
     height: 80px;
     margin-top: -80px;
+  }
+
+  .hero-clip-edge {
+    height: 120px;
+    margin-top: -120px;
   }
 
   #wave1 {

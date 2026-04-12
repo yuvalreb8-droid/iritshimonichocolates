@@ -110,78 +110,64 @@ document.addEventListener('DOMContentLoaded', () => {
   // All wave divider SVGs (wave1, wave2, wave3) — GPU translateX on scroll
   const cssWaveSvgs = Array.from(document.querySelectorAll('.wave-divider--css svg'));
 
-  /* ── SVG clipPath: clip hero bottom + workshop top to wave curve ── */
+  /* ── SVG clipPath on thin wrapper (200px) instead of full sections ──
+     The hero-clip-edge element sits between hero and wave1 in the DOM.
+     Hero z-index:1, workshop z-index:1 → workshop cream is on top in the
+     overlap zone. The clip-edge wrapper (z-index:5) shows hero dark brown
+     above the wave curve and is transparent below → workshop cream visible.
+     Paint area: ~200px instead of ~2000px+. ── */
   const svgNS = 'http://www.w3.org/2000/svg';
   const clipSvg = document.createElementNS(svgNS, 'svg');
   clipSvg.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
   const clipDefs = document.createElementNS(svgNS, 'defs');
 
-  const clipHero = document.createElementNS(svgNS, 'clipPath');
-  clipHero.id = 'waveClipHero';
-  clipHero.setAttribute('clipPathUnits', 'userSpaceOnUse');
-  const heroClipPath = document.createElementNS(svgNS, 'path');
-  clipHero.appendChild(heroClipPath);
+  const clipEdge = document.createElementNS(svgNS, 'clipPath');
+  clipEdge.id = 'waveClipEdge';
+  clipEdge.setAttribute('clipPathUnits', 'userSpaceOnUse');
+  const edgeClipPath = document.createElementNS(svgNS, 'path');
+  clipEdge.appendChild(edgeClipPath);
 
-  const clipWs = document.createElementNS(svgNS, 'clipPath');
-  clipWs.id = 'waveClipWorkshop';
-  clipWs.setAttribute('clipPathUnits', 'userSpaceOnUse');
-  const wsClipPath = document.createElementNS(svgNS, 'path');
-  clipWs.appendChild(wsClipPath);
-
-  clipDefs.appendChild(clipHero);
-  clipDefs.appendChild(clipWs);
+  clipDefs.appendChild(clipEdge);
   clipSvg.appendChild(clipDefs);
   document.body.insertBefore(clipSvg, document.body.firstChild);
 
-  // Apply clip-path CSS references (static — never changes after this)
-  if (heroSection) heroSection.style.clipPath = 'url(#waveClipHero)';
-  if (workshopSection) workshopSection.style.clipPath = 'url(#waveClipWorkshop)';
+  // Apply clip-path to the thin wrapper only (not the full sections)
+  const heroClipEdge = document.getElementById('heroClipEdge');
+  if (heroClipEdge) heroClipEdge.style.clipPath = 'url(#waveClipEdge)';
 
   // Cached layout values — recomputed on resize only
   let wavelengthPx = WAVELENGTH;
 
   function buildClipPaths() {
-    if (!wave1Div || !heroSection || !workshopSection) return;
+    if (!wave1Div || !heroClipEdge) return;
 
-    const heroRect = heroSection.getBoundingClientRect();
+    const edgeRect = heroClipEdge.getBoundingClientRect();
     const waveRect = wave1Div.getBoundingClientRect();
-    const wsRect = workshopSection.getBoundingClientRect();
 
     const scale = waveRect.width / VW; // px per viewBox unit
     wavelengthPx = WAVELENGTH * scale;
 
-    const waveTopInHero = waveRect.top - heroRect.top;
-    const waveTopInWs = waveRect.top - wsRect.top;
+    const waveTopInEdge = waveRect.top - edgeRect.top;
     const waveH = waveRect.height;
 
     // Extend 2 wavelengths beyond each edge for translateX headroom
     const extend = 2 * wavelengthPx;
     const xStart = -extend;
-    const xEnd = heroRect.width + extend;
+    const xEnd = edgeRect.width + extend;
     const totalW = xEnd - xStart;
-    const numPts = Math.ceil((totalW / wavelengthPx) * 60); // ~60 pts per wavelength
+    const numPts = Math.ceil((totalW / wavelengthPx) * 60);
 
-    // Hero clip: full top → wave bottom edge → close
-    let hd = `M ${xStart},0 H ${xEnd} `;
+    // Clip: full top of wrapper → wave bottom edge → close
+    // Above wave = visible (hero dark brown), below wave = clipped (workshop cream shows)
+    let d = `M ${xStart},0 H ${xEnd} `;
     for (let i = numPts; i >= 0; i--) {
       const x = xStart + (i / numPts) * totalW;
       const vbY = BASE_Y + Math.sin(((x / scale) / VW) * TWO_PI_FREQ) * AMP;
-      const yPx = waveTopInHero + (vbY / VH) * waveH;
-      hd += `L ${x.toFixed(1)},${yPx.toFixed(1)} `;
+      const yPx = waveTopInEdge + (vbY / VH) * waveH;
+      d += `L ${x.toFixed(1)},${yPx.toFixed(1)} `;
     }
-    hd += 'Z';
-    heroClipPath.setAttribute('d', hd);
-
-    // Workshop clip: wave top edge → full bottom → close
-    let wd = '';
-    for (let i = 0; i <= numPts; i++) {
-      const x = xStart + (i / numPts) * totalW;
-      const vbY = BASE_Y + Math.sin(((x / scale) / VW) * TWO_PI_FREQ) * AMP;
-      const yPx = waveTopInWs + (vbY / VH) * waveH;
-      wd += (i === 0 ? 'M ' : 'L ') + `${x.toFixed(1)},${yPx.toFixed(1)} `;
-    }
-    wd += `L ${xEnd},${wsRect.height} L ${xStart},${wsRect.height} Z`;
-    wsClipPath.setAttribute('d', wd);
+    d += 'Z';
+    edgeClipPath.setAttribute('d', d);
   }
 
   buildClipPaths();
@@ -211,11 +197,9 @@ document.addEventListener('DOMContentLoaded', () => {
       cssWaveSvgs[i].style.transform = `translate3d(-${shiftPct}%, 0, 0)`;
     }
 
-    // Hero/workshop clip paths: translate in sync with visible waves
+    // Thin clip-edge: translate in sync with visible waves (1 transform, not 2)
     const pxShift = -((phase % (Math.PI * 2)) / (Math.PI * 2)) * wavelengthPx;
-    const t = `translate(${pxShift.toFixed(1)}, 0)`;
-    heroClipPath.setAttribute('transform', t);
-    wsClipPath.setAttribute('transform', t);
+    edgeClipPath.setAttribute('transform', `translate(${pxShift.toFixed(1)}, 0)`);
 
     if (wavesActive) {
       requestAnimationFrame(animateWaves);
