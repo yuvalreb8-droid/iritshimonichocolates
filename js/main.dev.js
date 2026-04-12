@@ -147,12 +147,15 @@ document.addEventListener('DOMContentLoaded', () => {
     targetOffset = window.scrollY * SPEED;
   }, { passive: true });
 
-  // Cache DOM lookups for JS-animated wave dividers only (wave2/wave3 are CSS-only)
+  // Cache DOM lookups for wave1 (path-rebuilding) dividers
   const waveDividers = Array.from(document.querySelectorAll('.wave-divider:not(.wave-divider--css)')).map(divider => ({
     divider,
     wavePath: divider.querySelector('.wavePath'),
     fillPath: divider.querySelector('.fillPath'),
   }));
+
+  // Cache wave2/wave3 SVG elements for GPU-only scroll transform
+  const cssWaveSvgs = Array.from(document.querySelectorAll('.wave-divider--css svg'));
 
   let frameSkip = 0;
   function animateWaves() {
@@ -229,6 +232,15 @@ document.addEventListener('DOMContentLoaded', () => {
       workshopSection.style.clipPath = `polygon(${wsClip})`;
     }
 
+    // Wave2/wave3: scroll-reactive GPU transform (no path rebuilding)
+    // Phase maps to % shift: one wavelength = 2π radians = 50% of SVG width
+    if (cssWaveSvgs.length) {
+      const shiftPct = ((phase / (Math.PI * 2)) * 50) % 50;
+      for (let i = 0; i < cssWaveSvgs.length; i++) {
+        cssWaveSvgs[i].style.transform = `translate3d(-${shiftPct}%, 0, 0)`;
+      }
+    }
+
     // Only continue if any wave/section is still visible (performance: pause off-screen)
     if (wavesActive) {
       requestAnimationFrame(animateWaves);
@@ -262,8 +274,8 @@ document.addEventListener('DOMContentLoaded', () => {
     startAnimationIfNeeded();
   }, { rootMargin: '100px' });
 
-  // Observe JS-animated wave dividers + hero + workshop (CSS-only waves don't need JS)
-  document.querySelectorAll('.wave-divider:not(.wave-divider--css)').forEach(el => waveObserver.observe(el));
+  // Observe all wave dividers + hero + workshop
+  document.querySelectorAll('.wave-divider').forEach(el => waveObserver.observe(el));
   if (heroSection) waveObserver.observe(heroSection);
   if (workshopSection) waveObserver.observe(workshopSection);
 
