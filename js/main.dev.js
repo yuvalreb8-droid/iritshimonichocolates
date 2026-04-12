@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
      Provides consistent scroll events that bypass Safari momentum
      throttling. One unified system for desktop + mobile.
   ──────────────────────────────────────────────────────────── */
-  const lenis = new Lenis({ syncTouch: true });
+  const lenis = new Lenis({ syncTouch: false });
 
   gsap.registerPlugin(ScrollTrigger);
   lenis.on('scroll', ScrollTrigger.update);
