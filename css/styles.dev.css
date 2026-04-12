@@ -626,8 +626,7 @@ p, h1, h2, h3, h4, li {
 
 /* Prevent lower back-blob from overflowing the right page edge */
 .workshop__block--lower-left .gallery__back-img {
-  left: 4px;
-  right: auto;
+  right: 4px;
 }
 
 /* ── Contact-seam separator ─────────────────────────────────────
@@ -652,7 +651,7 @@ p, h1, h2, h3, h4, li {
   inset: 0;
   border-radius: 50%;
   box-shadow: inset 0 0 0 2px rgba(255, 114, 0, 0.55);
-  clip-path: circle(200px at 154px 225px);
+  clip-path: circle(200px at 271px 225px);
   background: transparent;
   z-index: 10;
   pointer-events: none;
@@ -665,7 +664,7 @@ p, h1, h2, h3, h4, li {
   inset: 0;
   border-radius: 50%;
   box-shadow: inset 0 0 0 2px rgba(160, 110, 210, 0.82);
-  clip-path: circle(200px at 176px 225px);
+  clip-path: circle(200px at 249px 225px);
   background: transparent;
   z-index: 10;
   pointer-events: none;
@@ -681,8 +680,7 @@ p, h1, h2, h3, h4, li {
 .gallery__back-img {
   position: absolute;
   top: 32px;
-  left: -18px;
-  right: auto;
+  right: -18px;
   width: min(385px, 80.2%);
   height: min(385px, 80.2%);
   border-radius: 55% 45% 50% 50% / 45% 55% 45% 55%;
@@ -1368,7 +1366,7 @@ p, h1, h2, h3, h4, li {
   .workshop__block--upper-right { order: 1; }
   .workshop__block--gallery { padding: 0.75rem 0; }
   .workshop__block--lower-left { order: 4; padding-right: 0; padding-left: 0; }
-  .workshop__block--lower-left .gallery__back-img { left: 0; right: auto; }
+  .workshop__block--lower-left .gallery__back-img { right: 0; }
   .workshop__block--lower-right { order: 3; }
 
   .workshop__block--text {
@@ -1396,8 +1394,7 @@ p, h1, h2, h3, h4, li {
 
   .gallery__back-img {
     top: 20px;
-    left: 0;
-    right: auto;
+    right: 0;
   }
 
   .gallery__stack.is-advancing .gallery__back-img {
