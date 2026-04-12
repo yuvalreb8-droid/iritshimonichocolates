@@ -260,7 +260,7 @@ p, h1, h2, h3, h4, li {
 }
 
 .hero__hi {
-  font-size: clamp(0.95rem, 5.1vw, 3.56rem);
+  font-size: clamp(0.81rem, 4.34vw, 3.03rem);
   font-weight: 700;
   color: #fffff2;
   margin-bottom: clamp(1.5rem, 4vw, 4rem);
@@ -1265,7 +1265,7 @@ p, h1, h2, h3, h4, li {
   }
 
   .hero__hi {
-    font-size: clamp(1.7rem, 7.8vw, 2.1rem);
+    font-size: clamp(1.45rem, 6.63vw, 1.79rem);
     justify-content: center;
   }
 
