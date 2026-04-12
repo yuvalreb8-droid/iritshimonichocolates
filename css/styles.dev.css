@@ -305,10 +305,14 @@ p, h1, h2, h3, h4, li {
   z-index: 3;
 }
 
-/* Blob wrapper — responsive sizing, shared positioning parent */
+/* Blob wrapper — responsive sizing, holds box-shadow */
 .hero__blob-wrap {
   width: clamp(285px, 33.15vw, 474px);
   height: clamp(285px, 33.15vw, 474px);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 4px rgba(255, 114, 0, 0.5),
+    0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .hero__blob-circle {
@@ -649,7 +653,7 @@ p, h1, h2, h3, h4, li {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 50%;
+  border-radius: inherit;
   box-shadow: inset 0 0 0 2px rgba(255, 114, 0, 0.55);
   clip-path: circle(200px at 271px 225px);
   background: transparent;
@@ -662,7 +666,7 @@ p, h1, h2, h3, h4, li {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 50%;
+  border-radius: inherit;
   box-shadow: inset 0 0 0 2px rgba(160, 110, 210, 0.82);
   clip-path: circle(200px at 249px 225px);
   background: transparent;
@@ -693,13 +697,15 @@ p, h1, h2, h3, h4, li {
   contain: layout style paint;
 }
 
-/* Gallery front blob wrapper — responsive sizing, shared positioning parent */
+/* Gallery front blob wrapper — responsive sizing, holds shadow + ::after ring */
 .gallery__front-wrap {
   position: absolute;
   top: 0;
   right: 20px;
   width: min(425px, 88.5%);
   height: min(425px, 88.5%);
+  border-radius: 50%;
+  box-shadow: 0 8px 30px rgba(102, 37, 2, 0.14);
   z-index: 2;
 }
 
