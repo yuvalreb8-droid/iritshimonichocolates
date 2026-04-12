@@ -441,6 +441,28 @@ p, h1, h2, h3, h4, li {
   overflow: visible;
 }
 
+/* CSS-only GPU-animated wave dividers (wave2, wave3) */
+.wave-divider--css {
+  overflow: hidden;
+}
+
+.wave-divider--css svg {
+  width: 250%;
+  animation: wave-drift 25s cubic-bezier(.55,.5,.45,.5) infinite;
+  will-change: transform;
+}
+
+@keyframes wave-drift {
+  0%   { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wave-divider--css svg {
+    animation: none;
+  }
+}
+
 /* ══════════════════════════════════════
    WORKSHOP (סדנה) SECTION
    ══════════════════════════════════════ */

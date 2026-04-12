@@ -147,8 +147,8 @@ document.addEventListener('DOMContentLoaded', () => {
     targetOffset = window.scrollY * SPEED;
   }, { passive: true });
 
-  // Cache DOM lookups for wave dividers
-  const waveDividers = Array.from(document.querySelectorAll('.wave-divider')).map(divider => ({
+  // Cache DOM lookups for JS-animated wave dividers only (wave2/wave3 are CSS-only)
+  const waveDividers = Array.from(document.querySelectorAll('.wave-divider:not(.wave-divider--css)')).map(divider => ({
     divider,
     wavePath: divider.querySelector('.wavePath'),
     fillPath: divider.querySelector('.fillPath'),
@@ -262,8 +262,8 @@ document.addEventListener('DOMContentLoaded', () => {
     startAnimationIfNeeded();
   }, { rootMargin: '100px' });
 
-  // Observe wave dividers + hero + workshop (all elements that depend on the animation)
-  document.querySelectorAll('.wave-divider').forEach(el => waveObserver.observe(el));
+  // Observe JS-animated wave dividers + hero + workshop (CSS-only waves don't need JS)
+  document.querySelectorAll('.wave-divider:not(.wave-divider--css)').forEach(el => waveObserver.observe(el));
   if (heroSection) waveObserver.observe(heroSection);
   if (workshopSection) waveObserver.observe(workshopSection);
 
