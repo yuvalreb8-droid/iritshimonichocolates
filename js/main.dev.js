@@ -276,8 +276,8 @@ function initBlobCarousel(stackId, btnId, images) {
   const btn   = document.getElementById(btnId);
   if (!stack) return;
 
-  // Blob elements — front has 3 clip layers, back is single
-  const frontWrapEl = stack.querySelector('.gallery__front-wrap');
+  // Blob elements
+  const frontEl = stack.querySelector('.gallery__front-img');
   const backEl  = stack.querySelector('.gallery__back-img');
 
   // Build a two-layer controller for one blob element
@@ -285,21 +285,19 @@ function initBlobCarousel(stackId, btnId, images) {
     const layerA = el.querySelector('.img-layer--a');
     const layerB = el.querySelector('.img-layer--b');
     return {
-      active:   layerA,
-      inactive: layerB,
+      active:   layerA,   // currently visible layer
+      inactive: layerB,   // preloaded but hidden layer
     };
   }
 
-  // Front: 3 blob-layer divs, each with its own img pair — keep all in sync
-  const frontLayers = Array.from(frontWrapEl.querySelectorAll('.gallery__front-img')).map(makeBlob);
-  const front = frontLayers[0]; // primary (used for seeding)
+  const front = makeBlob(frontEl);
   const back  = makeBlob(backEl);
 
   let current = 0;
   let busy    = false;
 
   // Seed next images into inactive layers (immediate neighbors only)
-  frontLayers.forEach(fl => { fl.inactive.src = images[(current + 1) % images.length]; });
+  front.inactive.src = images[(current + 1) % images.length];
   back.inactive.src  = images[(current + 2) % images.length];
 
   // Lazy-preload remaining images when carousel scrolls near viewport
@@ -313,11 +311,9 @@ function initBlobCarousel(stackId, btnId, images) {
   }, { rootMargin: '300px' });
   preloadObserver.observe(stack);
 
-  // Enforce initial opacity state on all front layers + back
-  frontLayers.forEach(fl => {
-    fl.active.style.opacity   = '1';
-    fl.inactive.style.opacity = '0';
-  });
+  // Enforce initial opacity state (CSS defaults handle this, but be explicit)
+  front.active.style.opacity   = '1';
+  front.inactive.style.opacity = '0';
   back.active.style.opacity    = '1';
   back.inactive.style.opacity  = '0';
 
@@ -351,8 +347,8 @@ function initBlobCarousel(stackId, btnId, images) {
     const afterNext     = (current + 2) % images.length;
     const afterAfterNext = (current + 3) % images.length;
 
-    // Crossfade all front blob layers + back blob simultaneously
-    frontLayers.forEach(fl => crossfade(fl, images[next], images[afterNext]));
+    // Crossfade both blobs simultaneously
+    crossfade(front, images[next],      images[afterNext]);
     crossfade(back,  images[afterNext], images[afterAfterNext]);
 
     current = next;
@@ -370,17 +366,21 @@ document.addEventListener('DOMContentLoaded', () => {
   initBlobCarousel('workshop-carousel', 'workshop-btn', WORKSHOP_IMAGES);
   initBlobCarousel('results-carousel',  'results-btn',  CHOCOLATE_IMAGES);
 
-  // Pause blob crossfade when off-screen (opacity animation, but still saves compositing)
+  // Pause blobMorph animation when off-screen to eliminate idle repaints
   const blobObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      const state = entry.isIntersecting ? 'running' : 'paused';
-      entry.target.querySelectorAll('.blob-layer').forEach(layer => {
-        layer.style.animationPlayState = state;
-      });
+      // For gallery stacks, target the animated front-img child
+      const el = entry.target;
+      const animated = el.classList.contains('hero__blob-circle')
+        ? el
+        : el.querySelector('.gallery__front-img');
+      if (animated) {
+        animated.style.animationPlayState = entry.isIntersecting ? 'running' : 'paused';
+      }
     });
   }, { rootMargin: '100px' });
 
-  const heroWrap = document.querySelector('.hero__blob-wrap');
-  if (heroWrap) blobObserver.observe(heroWrap);
+  const heroBlob = document.querySelector('.hero__blob-circle');
+  if (heroBlob) blobObserver.observe(heroBlob);
   document.querySelectorAll('.gallery__stack').forEach(el => blobObserver.observe(el));
 });
