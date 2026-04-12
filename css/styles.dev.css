@@ -265,7 +265,6 @@ p, h1, h2, h3, h4, li {
   color: #fffff2;
   margin-bottom: clamp(1.5rem, 4vw, 4rem);
   line-height: 1.375;
-  text-align: center;
 }
 
 .hero__wave-hand {

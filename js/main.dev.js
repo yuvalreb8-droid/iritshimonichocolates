@@ -36,6 +36,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* ── Center hero__hi under hero__title (desktop only) ── */
+  if (window.innerWidth > 768) {
+    const title = document.querySelector('.hero__title');
+    const hi = document.querySelector('.hero__hi');
+    if (title && hi) {
+      const range = document.createRange();
+      range.selectNodeContents(title);
+      hi.style.width = range.getBoundingClientRect().width + 'px';
+      hi.style.textAlign = 'center';
+    }
+  }
+
   /* ── Navbar show/hide — native scroll, no Lenis ──────────────
      Pure native scroll listener + CSS transition for the navbar.
      No RAF loop, no scroll hijacking. iOS handles momentum natively.
