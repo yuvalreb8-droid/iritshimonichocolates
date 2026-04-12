@@ -443,18 +443,9 @@ p, h1, h2, h3, h4, li {
 }
 
 #wave1 {
-  height: 70px;
-  margin-top: -110px;
+  margin-top: -160px;
   z-index: 10;
-}
-
-/* SVG stays full 160px so wave renders at correct scale,
-   positioned so the wave zone (y≈56-120) aligns within the 70px container.
-   overflow:hidden on .wave-divider--css clips the rest. */
-#wave1 .wave-svg {
-  height: 160px;
-  bottom: auto;
-  top: -56px;
+  clip-path: inset(36% 0 0 0);
 }
 
 #wave2 {
@@ -491,8 +482,8 @@ p, h1, h2, h3, h4, li {
   background-size: 100% 100%;
   background-position: top center;
   background-repeat: no-repeat;
-  margin-top: -120px;
-  padding-top: calc(120px + 1.5rem);
+  margin-top: -160px;
+  padding-top: calc(160px + 1.5rem);
   z-index: 1;
   overflow: hidden;
 }
@@ -1338,13 +1329,7 @@ p, h1, h2, h3, h4, li {
   }
 
   #wave1 {
-    height: 36px;
-    margin-top: -52px;
-  }
-
-  #wave1 .wave-svg {
-    height: 80px;
-    top: -28px;
+    margin-top: -80px;
   }
 
   #wave2 {
@@ -1356,8 +1341,8 @@ p, h1, h2, h3, h4, li {
   /* ── Workshop ── */
   .workshop {
     background-image: none;
-    margin-top: -64px;
-    padding-top: calc(64px + 1.5rem);
+    margin-top: -80px;
+    padding-top: calc(80px + 1.5rem);
   }
 
   .workshop__grid {
