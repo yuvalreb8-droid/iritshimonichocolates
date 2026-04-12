@@ -61,6 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (scroll < 10) {
       navY = -navH;
+      gsap.to(navbar, { y: -navH, duration: 0.3, ease: 'power2.out', force3D: true });
+      prevScroll = scroll;
+      return;
     } else if (direction === 1) {
       navY = Math.max(-navH, Math.min(0, navY - delta));
     } else if (direction === -1) {
