@@ -292,7 +292,7 @@ function initBlobCarousel(stackId, btnId, images) {
   const btn   = document.getElementById(btnId);
   if (!stack) return;
 
-  // Blob elements — front-img lives inside front-wrap now
+  // Blob elements
   const frontEl = stack.querySelector('.gallery__front-img');
   const backEl  = stack.querySelector('.gallery__back-img');
 
@@ -382,25 +382,21 @@ document.addEventListener('DOMContentLoaded', () => {
   initBlobCarousel('workshop-carousel', 'workshop-btn', WORKSHOP_IMAGES);
   initBlobCarousel('results-carousel',  'results-btn',  CHOCOLATE_IMAGES);
 
-  // Scale fixed-size blob-wobble elements to fill their responsive wrappers
-  function updateBlobScales() {
-    document.querySelectorAll('.blob-wrap').forEach(wrap => {
-      const wobble = wrap.querySelector('.blob-wobble');
-      if (wobble) wobble.style.setProperty('--blob-scale', wrap.offsetWidth / 300);
-    });
-  }
-  updateBlobScales();
-  window.addEventListener('resize', updateBlobScales, { passive: true });
-
-  // Pause blob wobble when off-screen
+  // Pause blobMorph animation when off-screen to eliminate idle repaints
   const blobObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      const wobble = entry.target.querySelector('.blob-wobble');
-      if (wobble) wobble.style.animationPlayState = entry.isIntersecting ? 'running' : 'paused';
+      // For gallery stacks, target the animated front-img child
+      const el = entry.target;
+      const animated = el.classList.contains('hero__blob-circle')
+        ? el
+        : el.querySelector('.gallery__front-img');
+      if (animated) {
+        animated.style.animationPlayState = entry.isIntersecting ? 'running' : 'paused';
+      }
     });
   }, { rootMargin: '100px' });
 
-  const heroWrap = document.querySelector('.hero__blob-wrap');
-  if (heroWrap) blobObserver.observe(heroWrap);
+  const heroBlob = document.querySelector('.hero__blob-circle');
+  if (heroBlob) blobObserver.observe(heroBlob);
   document.querySelectorAll('.gallery__stack').forEach(el => blobObserver.observe(el));
 });
