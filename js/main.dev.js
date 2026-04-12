@@ -36,42 +36,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── Lenis + GSAP — smooth scroll + navbar 1:1 tracking ──────
-     Lenis takes over scroll on all devices (syncTouch: true for iOS).
-     Provides consistent scroll events that bypass Safari momentum
-     throttling. One unified system for desktop + mobile.
+  /* ── Navbar show/hide — native scroll, no Lenis ──────────────
+     Pure native scroll listener + CSS transition for the navbar.
+     No RAF loop, no scroll hijacking. iOS handles momentum natively.
   ──────────────────────────────────────────────────────────── */
-  const lenis = new Lenis({ syncTouch: false });
-
-  gsap.registerPlugin(ScrollTrigger);
-  lenis.on('scroll', ScrollTrigger.update);
-  gsap.ticker.add((time) => { lenis.raf(time * 1000); });
-  gsap.ticker.lagSmoothing(0);
-
-  // Navbar 1:1 tracking via Lenis scroll callback
-  const navH = navbar.offsetHeight + 20; // +20 buffer to ensure fully hidden
-  let navY = -navH;
+  const navH = navbar.offsetHeight + 20;
   let prevScroll = window.scrollY;
+  let navVisible = false;
 
-  gsap.set(navbar, { y: navY, force3D: true });
+  // Start hidden
+  navbar.style.transform = `translateY(-${navH}px)`;
+  navbar.style.transition = 'transform 0.35s ease-out';
 
-  lenis.on('scroll', ({ scroll, direction }) => {
-    const delta = Math.abs(scroll - prevScroll);
+  window.addEventListener('scroll', () => {
+    const scroll = window.scrollY;
+    const direction = scroll - prevScroll;
     prevScroll = scroll;
 
     if (scroll < 10) {
-      navY = -navH;
-      gsap.to(navbar, { y: -navH, duration: 0.8, ease: 'power2.out', force3D: true });
-      prevScroll = scroll;
-      return;
-    } else if (direction === 1) {
-      navY = Math.max(-navH, Math.min(0, navY - delta));
-    } else if (direction === -1) {
-      navY = Math.max(-navH, Math.min(0, navY + delta));
+      // Near top — hide with slower transition
+      navbar.style.transition = 'transform 0.8s ease-out';
+      navbar.style.transform = `translateY(-${navH}px)`;
+      navVisible = false;
+    } else if (direction > 3 && navVisible) {
+      // Scrolling down — hide
+      navbar.style.transition = 'transform 0.35s ease-out';
+      navbar.style.transform = `translateY(-${navH}px)`;
+      navVisible = false;
+    } else if (direction < -3 && !navVisible) {
+      // Scrolling up — show
+      navbar.style.transition = 'transform 0.35s ease-out';
+      navbar.style.transform = 'translateY(0)';
+      navVisible = true;
     }
-
-    gsap.set(navbar, { y: Math.round(navY), force3D: true });
-  });
+  }, { passive: true });
 
   /* ── Q&A Cards ── */
   function toggleCard(card) {
