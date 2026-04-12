@@ -283,6 +283,7 @@ p, h1, h2, h3, h4, li {
   line-height: 2.25;
   font-weight: 300;
   margin-bottom: 0.5rem;
+  white-space: nowrap;
 }
 
 .hero__subtitle-line2 {
