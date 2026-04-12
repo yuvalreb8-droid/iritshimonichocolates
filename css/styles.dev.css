@@ -329,6 +329,13 @@ p, h1, h2, h3, h4, li {
   75% { border-radius: 50% 40% 50% 60% / 50% 50% 40% 60%; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .hero__blob-circle,
+  .gallery__front-img {
+    animation: none;
+  }
+}
+
 .hero__blob-circle img {
   width: 100%;
   height: 100%;
@@ -657,6 +664,7 @@ p, h1, h2, h3, h4, li {
   z-index: 1;
   opacity: 0.88;
   transition: opacity 0.65s ease-in-out;
+  contain: layout style paint;
 }
 
 .gallery__front-img {
@@ -672,6 +680,8 @@ p, h1, h2, h3, h4, li {
   z-index: 2;
   animation: blobMorph 10s ease-in-out infinite;
   transition: opacity 0.65s ease-in-out;
+  will-change: border-radius;
+  contain: layout style paint;
 }
 
 /* Two-layer crossfade: both img layers are stacked absolutely inside each blob */

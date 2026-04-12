@@ -341,13 +341,20 @@ function initBlobCarousel(stackId, btnId, images) {
   let current = 0;
   let busy    = false;
 
-  // Preload the full image sets up front so subsequent transitions are instant
-  preloadImages(images);
-
-  // Seed initial images — active layers already have src from HTML
-  // Preload the next images into inactive layers
+  // Seed next images into inactive layers (immediate neighbors only)
   front.inactive.src = images[(current + 1) % images.length];
   back.inactive.src  = images[(current + 2) % images.length];
+
+  // Lazy-preload remaining images when carousel scrolls near viewport
+  let preloaded = false;
+  const preloadObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && !preloaded) {
+      preloaded = true;
+      preloadImages(images);
+      preloadObserver.disconnect();
+    }
+  }, { rootMargin: '300px' });
+  preloadObserver.observe(stack);
 
   // Enforce initial opacity state (CSS defaults handle this, but be explicit)
   front.active.style.opacity   = '1';
@@ -403,4 +410,22 @@ function initBlobCarousel(stackId, btnId, images) {
 document.addEventListener('DOMContentLoaded', () => {
   initBlobCarousel('workshop-carousel', 'workshop-btn', WORKSHOP_IMAGES);
   initBlobCarousel('results-carousel',  'results-btn',  CHOCOLATE_IMAGES);
+
+  // Pause blobMorph animation when off-screen to eliminate idle repaints
+  const blobObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      // For gallery stacks, target the animated front-img child
+      const el = entry.target;
+      const animated = el.classList.contains('hero__blob-circle')
+        ? el
+        : el.querySelector('.gallery__front-img');
+      if (animated) {
+        animated.style.animationPlayState = entry.isIntersecting ? 'running' : 'paused';
+      }
+    });
+  }, { rootMargin: '100px' });
+
+  const heroBlob = document.querySelector('.hero__blob-circle');
+  if (heroBlob) blobObserver.observe(heroBlob);
+  document.querySelectorAll('.gallery__stack').forEach(el => blobObserver.observe(el));
 });
