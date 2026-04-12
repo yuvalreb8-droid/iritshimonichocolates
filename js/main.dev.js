@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
   gsap.ticker.lagSmoothing(0);
 
   // Navbar 1:1 tracking via Lenis scroll callback
-  const navH = navbar.offsetHeight;
+  const navH = navbar.offsetHeight + 20; // +20 buffer to ensure fully hidden
   let navY = -navH;
   let prevScroll = window.scrollY;
 
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (scroll < 10) {
       navY = -navH;
-      gsap.to(navbar, { y: -navH, duration: 0.45, ease: 'power2.out', force3D: true });
+      gsap.to(navbar, { y: -navH, duration: 0.8, ease: 'power2.out', force3D: true });
       prevScroll = scroll;
       return;
     } else if (direction === 1) {
