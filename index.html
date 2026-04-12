@@ -18,9 +18,24 @@
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&family=Rubik:wght@900&family=Secular+One&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.21/dist/lenis.css">
   <style>body{background:#662502}</style>
-  <link rel="stylesheet" href="css/styles.css?v=265">
+  <link rel="stylesheet" href="css/styles.css?v=266">
 </head>
 <body>
+
+  <!-- Blob clip shapes for opacity crossfade (replaces border-radius animation) -->
+  <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+    <defs>
+      <clipPath id="blobA" clipPathUnits="objectBoundingBox">
+        <path d="M.57 0L.6 0C.821 0 1 .255 1 .57L1 .6C1 .821.785 1 .52 1L.48 1C.215 1 0 .785 0 .52L0 .48C0 .215.255 0 .57 0Z"/>
+      </clipPath>
+      <clipPath id="blobB" clipPathUnits="objectBoundingBox">
+        <path d="M.48 0L.43 0C.745 0 1 .215 1 .48L1 .43C1 .745.821 1 .6 1L.48 1C.215 1 0 .785 0 .52L0 .4C0 .179.215 0 .48 0Z"/>
+      </clipPath>
+      <clipPath id="blobC" clipPathUnits="objectBoundingBox">
+        <path d="M.4 0L.52 0C.785 0 1 .179 1 .4L1 .52C1 .785.745 1 .43 1L.48 1C.215 1 0 .785 0 .52L0 .57C0 .255.179 0 .4 0Z"/>
+      </clipPath>
+    </defs>
+  </svg>
 
   <!-- Skip to content link (IS 5568 / WCAG 2.0 AA) -->
   <a href="#main-content" class="skip-link">דלג לתוכן הראשי</a>
@@ -68,10 +83,17 @@
 
       <!-- Right side (photo) — appears on the left visually in RTL -->
       <div class="hero__image">
-        <div class="hero__blob-circle">
-          <!-- Placeholder for Irit's photo — replace src later -->
-          <img src="images/irit-placeholder.webp" alt="אירית שמעוני" width="900" height="1600" fetchpriority="high" onerror="this.style.display='none'">
-          <div class="hero__blob-placeholder">תמונה תתווסף בקרוב</div>
+        <div class="hero__blob-wrap">
+          <div class="hero__blob-circle blob-layer blob-layer--a" style="clip-path:url(#blobA)">
+            <img src="images/irit-placeholder.webp" alt="אירית שמעוני" width="900" height="1600" fetchpriority="high" onerror="this.style.display='none'">
+            <div class="hero__blob-placeholder">תמונה תתווסף בקרוב</div>
+          </div>
+          <div class="hero__blob-circle blob-layer blob-layer--b" style="clip-path:url(#blobB)" aria-hidden="true">
+            <img src="images/irit-placeholder.webp" alt="" width="900" height="1600" onerror="this.style.display='none'">
+          </div>
+          <div class="hero__blob-circle blob-layer blob-layer--c" style="clip-path:url(#blobC)" aria-hidden="true">
+            <img src="images/irit-placeholder.webp" alt="" width="900" height="1600" onerror="this.style.display='none'">
+          </div>
         </div>
       </div>
     </div>
@@ -162,9 +184,19 @@
             <img class="img-layer img-layer--a" src="images/people%20at%20workshop/people%20at%20workshop%202.webp" alt="" width="880" height="1168" loading="lazy">
             <img class="img-layer img-layer--b" src="" alt="" width="880" height="1168" loading="lazy">
           </div>
-          <div class="gallery__front-img">
-            <img class="img-layer img-layer--a" src="images/people%20at%20workshop/people%20at%20workshop%201.webp" alt="תמונות מהסדנאות" width="880" height="1168" loading="lazy">
-            <img class="img-layer img-layer--b" src="" alt="" width="880" height="1168" loading="lazy">
+          <div class="gallery__front-wrap">
+            <div class="gallery__front-img blob-layer blob-layer--a" style="clip-path:url(#blobA)">
+              <img class="img-layer img-layer--a" src="images/people%20at%20workshop/people%20at%20workshop%201.webp" alt="תמונות מהסדנאות" width="880" height="1168" loading="lazy">
+              <img class="img-layer img-layer--b" src="" alt="" width="880" height="1168" loading="lazy">
+            </div>
+            <div class="gallery__front-img blob-layer blob-layer--b" style="clip-path:url(#blobB)" aria-hidden="true">
+              <img class="img-layer img-layer--a" src="images/people%20at%20workshop/people%20at%20workshop%201.webp" alt="" width="880" height="1168" loading="lazy">
+              <img class="img-layer img-layer--b" src="" alt="" width="880" height="1168" loading="lazy">
+            </div>
+            <div class="gallery__front-img blob-layer blob-layer--c" style="clip-path:url(#blobC)" aria-hidden="true">
+              <img class="img-layer img-layer--a" src="images/people%20at%20workshop/people%20at%20workshop%201.webp" alt="" width="880" height="1168" loading="lazy">
+              <img class="img-layer img-layer--b" src="" alt="" width="880" height="1168" loading="lazy">
+            </div>
           </div>
         </div>
       </div>
@@ -176,9 +208,19 @@
             <img class="img-layer img-layer--a" src="images/chocolate%20pictures/chocolate%20picture%202.webp" alt="" width="1168" height="880" loading="lazy">
             <img class="img-layer img-layer--b" src="" alt="" width="1168" height="880" loading="lazy">
           </div>
-          <div class="gallery__front-img">
-            <img class="img-layer img-layer--a" src="images/chocolate%20pictures/chocolate%20picture%201.webp" alt="תוצאות מסדנאות" width="880" height="1168" loading="lazy">
-            <img class="img-layer img-layer--b" src="" alt="" width="880" height="1168" loading="lazy">
+          <div class="gallery__front-wrap">
+            <div class="gallery__front-img blob-layer blob-layer--a" style="clip-path:url(#blobA)">
+              <img class="img-layer img-layer--a" src="images/chocolate%20pictures/chocolate%20picture%201.webp" alt="תוצאות מסדנאות" width="880" height="1168" loading="lazy">
+              <img class="img-layer img-layer--b" src="" alt="" width="880" height="1168" loading="lazy">
+            </div>
+            <div class="gallery__front-img blob-layer blob-layer--b" style="clip-path:url(#blobB)" aria-hidden="true">
+              <img class="img-layer img-layer--a" src="images/chocolate%20pictures/chocolate%20picture%201.webp" alt="" width="880" height="1168" loading="lazy">
+              <img class="img-layer img-layer--b" src="" alt="" width="880" height="1168" loading="lazy">
+            </div>
+            <div class="gallery__front-img blob-layer blob-layer--c" style="clip-path:url(#blobC)" aria-hidden="true">
+              <img class="img-layer img-layer--a" src="images/chocolate%20pictures/chocolate%20picture%201.webp" alt="" width="880" height="1168" loading="lazy">
+              <img class="img-layer img-layer--b" src="" alt="" width="880" height="1168" loading="lazy">
+            </div>
           </div>
         </div>
       </div>
@@ -371,6 +413,6 @@
   <script src="https://unpkg.com/lenis@1.3.21/dist/lenis.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/ScrollTrigger.min.js"></script>
-  <script src="js/main.js?v=145"></script>
+  <script src="js/main.js?v=146"></script>
 </body>
 </html>

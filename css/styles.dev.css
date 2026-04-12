@@ -318,35 +318,78 @@ p, h1, h2, h3, h4, li {
   z-index: 3;
 }
 
-.hero__blob-circle {
+/* Blob wrapper — holds box-shadow (clip-path would clip it on children) */
+.hero__blob-wrap {
+  position: relative;
   width: clamp(285px, 33.15vw, 474px);
   height: clamp(285px, 33.15vw, 474px);
-  border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 4px rgba(255, 114, 0, 0.5),
+    0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.hero__blob-circle {
+  width: 100%;
+  height: 100%;
   background: #7C3913;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow:
-    0 0 0 4px rgba(255, 114, 0, 0.5),
-    0 10px 30px rgba(0, 0, 0, 0.3);
-  animation: blobMorph 8s ease-in-out infinite;
-  will-change: border-radius;
   contain: layout style paint;
 }
 
-@keyframes blobMorph {
-  0%, 100% { border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%; }
-  25% { border-radius: 50% 60% 40% 50% / 40% 50% 60% 50%; }
-  50% { border-radius: 40% 50% 60% 50% / 60% 40% 50% 50%; }
-  75% { border-radius: 50% 40% 50% 60% / 50% 50% 40% 60%; }
+/* ── Opacity-based blob crossfade (compositor-only, zero repaint) ── */
+.blob-layer {
+  position: absolute;
+  inset: 0;
+  will-change: opacity;
+}
+
+.blob-layer--a {
+  animation: blobFadeA 10s ease-in-out infinite;
+  z-index: 3;
+}
+
+.blob-layer--b {
+  animation: blobFadeB 10s ease-in-out infinite;
+  opacity: 0;
+  z-index: 2;
+}
+
+.blob-layer--c {
+  animation: blobFadeC 10s ease-in-out infinite;
+  opacity: 0;
+  z-index: 1;
+}
+
+.hero__blob-wrap .blob-layer--a { animation-duration: 8s; }
+.hero__blob-wrap .blob-layer--b { animation-duration: 8s; }
+.hero__blob-wrap .blob-layer--c { animation-duration: 8s; }
+
+@keyframes blobFadeA {
+  0%, 28%  { opacity: 1; }
+  38%, 90% { opacity: 0; }
+  100%     { opacity: 1; }
+}
+
+@keyframes blobFadeB {
+  0%, 28%  { opacity: 0; }
+  38%, 62% { opacity: 1; }
+  72%, 100%{ opacity: 0; }
+}
+
+@keyframes blobFadeC {
+  0%, 62%  { opacity: 0; }
+  72%, 90% { opacity: 1; }
+  100%     { opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero__blob-circle,
-  .gallery__front-img {
-    animation: none;
-  }
+  .blob-layer { animation: none !important; }
+  .blob-layer--a { opacity: 1; }
+  .blob-layer--b, .blob-layer--c { opacity: 0; }
 }
 
 .hero__blob-circle img {
@@ -632,7 +675,7 @@ p, h1, h2, h3, h4, li {
 ──────────────────────────────────────────────────────────────── */
 
 /* Upper blob stack — orange button #ff7200 */
-.workshop__block--upper-left .gallery__front-img::after {
+.workshop__block--upper-left .gallery__front-wrap::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -645,7 +688,7 @@ p, h1, h2, h3, h4, li {
 }
 
 /* Lower blob stack — purple button #B090D0 */
-.workshop__block--lower-left .gallery__front-img::after {
+.workshop__block--lower-left .gallery__front-wrap::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -680,20 +723,24 @@ p, h1, h2, h3, h4, li {
   contain: layout style paint;
 }
 
-.gallery__front-img {
+/* Gallery front blob wrapper — holds positioning, shadow, ::after ring */
+.gallery__front-wrap {
   position: absolute;
   top: 0;
   right: 20px;
   width: min(425px, 88.5%);
   height: min(425px, 88.5%);
-  border-radius: 50% 50% 45% 55% / 55% 45% 55% 45%;
-  overflow: hidden;
-  background: #d4b870;
+  border-radius: 50%;
   box-shadow: 0 8px 30px rgba(102, 37, 2, 0.14);
   z-index: 2;
-  animation: blobMorph 10s ease-in-out infinite;
+}
+
+.gallery__front-img {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #d4b870;
   transition: opacity 0.65s ease-in-out;
-  will-change: border-radius;
   contain: layout style paint;
 }
 
@@ -1285,7 +1332,7 @@ p, h1, h2, h3, h4, li {
     font-size: clamp(1.1rem, 5vw, 1.4rem);
   }
 
-  .hero__blob-circle {
+  .hero__blob-wrap {
     width: clamp(163px, 62.5vw, 300px);
     height: clamp(163px, 62.5vw, 300px);
   }
@@ -1376,7 +1423,7 @@ p, h1, h2, h3, h4, li {
     width: min(280px, 75vw);
   }
 
-  .gallery__front-img {
+  .gallery__front-wrap {
     top: 0;
     right: 10px;
   }
