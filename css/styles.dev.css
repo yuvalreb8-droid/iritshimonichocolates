@@ -305,33 +305,62 @@ p, h1, h2, h3, h4, li {
   z-index: 3;
 }
 
-.hero__blob-circle {
+/* Blob wrapper — responsive sizing, holds box-shadow */
+.hero__blob-wrap {
   width: clamp(285px, 33.15vw, 474px);
   height: clamp(285px, 33.15vw, 474px);
-  border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 4px rgba(255, 114, 0, 0.5),
+    0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.hero__blob-circle {
+  width: 300px;
+  height: 300px;
   background: #7C3913;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow:
-    0 0 0 4px rgba(255, 114, 0, 0.5),
-    0 10px 30px rgba(0, 0, 0, 0.3);
-  animation: blobMorph 8s ease-in-out infinite;
-  will-change: border-radius;
   contain: layout style paint;
 }
 
-@keyframes blobMorph {
-  0%, 100% { border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%; }
-  25% { border-radius: 50% 60% 40% 50% / 40% 50% 60% 50%; }
-  50% { border-radius: 40% 50% 60% 50% / 60% 40% 50% 50%; }
-  75% { border-radius: 50% 40% 50% 60% / 50% 50% 40% 60%; }
+/* ── clip-path blob wobble (no layout/paint — only composite) ── */
+.blob-wobble {
+  clip-path: path("M 170,5 C 250,5 295,80 295,160 C 295,240 220,295 140,295 C 60,295 5,220 5,140 C 5,60 90,5 170,5 Z");
+  animation: blobWobble 10s ease-in-out infinite;
+  will-change: clip-path;
+  transform: scale(var(--blob-scale, 1));
+  transform-origin: top left;
+}
+
+.hero__blob-circle.blob-wobble {
+  animation-duration: 8s;
+}
+
+@keyframes blobWobble {
+  0%, 100% {
+    clip-path: path("M 170,5 C 250,5 295,80 295,160 C 295,240 220,295 140,295 C 60,295 5,220 5,140 C 5,60 90,5 170,5 Z");
+  }
+  25% {
+    clip-path: path("M 140,5 C 225,5 295,65 295,140 C 295,225 235,295 160,295 C 75,295 5,235 5,160 C 5,75 65,5 140,5 Z");
+  }
+  50% {
+    clip-path: path("M 130,10 C 215,10 290,85 290,170 C 290,240 240,290 170,290 C 85,290 10,215 10,130 C 10,60 60,10 130,10 Z");
+  }
+  75% {
+    clip-path: path("M 160,10 C 230,10 290,60 290,130 C 290,215 215,290 130,290 C 60,290 10,240 10,170 C 10,85 75,10 160,10 Z");
+  }
+}
+
+/* Wrapper scales the fixed-size blob to fill responsive container */
+.blob-wrap {
+  position: relative;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero__blob-circle,
-  .gallery__front-img {
+  .blob-wobble {
     animation: none;
   }
 }
@@ -620,7 +649,7 @@ p, h1, h2, h3, h4, li {
 ──────────────────────────────────────────────────────────────── */
 
 /* Upper blob stack — orange button #ff7200 */
-.workshop__block--upper-left .gallery__front-img::after {
+.workshop__block--upper-left .gallery__front-wrap::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -633,7 +662,7 @@ p, h1, h2, h3, h4, li {
 }
 
 /* Lower blob stack — purple button #B090D0 */
-.workshop__block--lower-left .gallery__front-img::after {
+.workshop__block--lower-left .gallery__front-wrap::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -668,20 +697,24 @@ p, h1, h2, h3, h4, li {
   contain: layout style paint;
 }
 
-.gallery__front-img {
+/* Gallery front blob wrapper — responsive sizing, holds shadow + ::after ring */
+.gallery__front-wrap {
   position: absolute;
   top: 0;
   right: 20px;
   width: min(425px, 88.5%);
   height: min(425px, 88.5%);
-  border-radius: 50% 50% 45% 55% / 55% 45% 55% 45%;
-  overflow: hidden;
-  background: #d4b870;
+  border-radius: 50%;
   box-shadow: 0 8px 30px rgba(102, 37, 2, 0.14);
   z-index: 2;
-  animation: blobMorph 10s ease-in-out infinite;
+}
+
+.gallery__front-img {
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
+  background: #d4b870;
   transition: opacity 0.65s ease-in-out;
-  will-change: border-radius;
   contain: layout style paint;
 }
 
@@ -1273,7 +1306,7 @@ p, h1, h2, h3, h4, li {
     font-size: clamp(1.1rem, 5vw, 1.4rem);
   }
 
-  .hero__blob-circle {
+  .hero__blob-wrap {
     width: clamp(163px, 62.5vw, 300px);
     height: clamp(163px, 62.5vw, 300px);
   }
@@ -1360,7 +1393,7 @@ p, h1, h2, h3, h4, li {
     width: min(280px, 75vw);
   }
 
-  .gallery__front-img {
+  .gallery__front-wrap {
     top: 0;
     right: 10px;
   }

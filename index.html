@@ -18,7 +18,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&family=Rubik:wght@900&family=Secular+One&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.21/dist/lenis.css">
   <style>body{background:#662502}</style>
-  <link rel="stylesheet" href="css/styles.css?v=268">
+  <link rel="stylesheet" href="css/styles.css?v=269">
 </head>
 <body>
 
@@ -68,10 +68,11 @@
 
       <!-- Right side (photo) — appears on the left visually in RTL -->
       <div class="hero__image">
-        <div class="hero__blob-circle">
-          <!-- Placeholder for Irit's photo — replace src later -->
-          <img src="images/irit-placeholder.webp" alt="אירית שמעוני" width="900" height="1600" fetchpriority="high" onerror="this.style.display='none'">
-          <div class="hero__blob-placeholder">תמונה תתווסף בקרוב</div>
+        <div class="hero__blob-wrap blob-wrap">
+          <div class="hero__blob-circle blob-wobble">
+            <img src="images/irit-placeholder.webp" alt="אירית שמעוני" width="900" height="1600" fetchpriority="high" onerror="this.style.display='none'">
+            <div class="hero__blob-placeholder">תמונה תתווסף בקרוב</div>
+          </div>
         </div>
       </div>
     </div>
@@ -159,9 +160,11 @@
             <img class="img-layer img-layer--a" src="images/people%20at%20workshop/people%20at%20workshop%202.webp" alt="" width="880" height="1168" loading="lazy">
             <img class="img-layer img-layer--b" src="" alt="" width="880" height="1168" loading="lazy">
           </div>
-          <div class="gallery__front-img">
-            <img class="img-layer img-layer--a" src="images/people%20at%20workshop/people%20at%20workshop%201.webp" alt="תמונות מהסדנאות" width="880" height="1168" loading="lazy">
-            <img class="img-layer img-layer--b" src="" alt="" width="880" height="1168" loading="lazy">
+          <div class="gallery__front-wrap blob-wrap">
+            <div class="gallery__front-img blob-wobble">
+              <img class="img-layer img-layer--a" src="images/people%20at%20workshop/people%20at%20workshop%201.webp" alt="תמונות מהסדנאות" width="880" height="1168" loading="lazy">
+              <img class="img-layer img-layer--b" src="" alt="" width="880" height="1168" loading="lazy">
+            </div>
           </div>
         </div>
       </div>
@@ -173,9 +176,11 @@
             <img class="img-layer img-layer--a" src="images/chocolate%20pictures/chocolate%20picture%202.webp" alt="" width="1168" height="880" loading="lazy">
             <img class="img-layer img-layer--b" src="" alt="" width="1168" height="880" loading="lazy">
           </div>
-          <div class="gallery__front-img">
-            <img class="img-layer img-layer--a" src="images/chocolate%20pictures/chocolate%20picture%201.webp" alt="תוצאות מסדנאות" width="880" height="1168" loading="lazy">
-            <img class="img-layer img-layer--b" src="" alt="" width="880" height="1168" loading="lazy">
+          <div class="gallery__front-wrap blob-wrap">
+            <div class="gallery__front-img blob-wobble">
+              <img class="img-layer img-layer--a" src="images/chocolate%20pictures/chocolate%20picture%201.webp" alt="תוצאות מסדנאות" width="880" height="1168" loading="lazy">
+              <img class="img-layer img-layer--b" src="" alt="" width="880" height="1168" loading="lazy">
+            </div>
           </div>
         </div>
       </div>
@@ -368,6 +373,6 @@
   <script src="https://unpkg.com/lenis@1.3.21/dist/lenis.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/ScrollTrigger.min.js"></script>
-  <script src="js/main.js?v=146"></script>
+  <script src="js/main.js?v=147"></script>
 </body>
 </html>
