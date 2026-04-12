@@ -1266,6 +1266,10 @@ p, h1, h2, h3, h4, li {
   }
 
   .hero__subtitle-line1,
+  .hero__subtitle-line1 {
+    white-space: normal;
+  }
+
   .hero__subtitle-line2 {
     font-size: clamp(1.1rem, 5vw, 1.4rem);
   }
