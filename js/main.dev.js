@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
         spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
         spans[1].style.opacity = '0';
         spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+        // Force navbar visible when menu is open
+        navbar.style.transform = 'translateY(0)';
       } else {
         spans[0].style.transform = '';
         spans[1].style.opacity = '';
@@ -61,6 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
   navbar.style.transition = 'transform 0.35s ease-out';
 
   window.addEventListener('scroll', () => {
+    // Don't hide navbar while mobile menu is open
+    if (navbar.classList.contains('menu-open')) return;
+
     const scroll = window.scrollY;
     const direction = scroll - prevScroll;
     prevScroll = scroll;
