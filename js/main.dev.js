@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (scroll < 10) {
       navY = -navH;
-      gsap.to(navbar, { y: -navH, duration: 0.3, ease: 'power2.out', force3D: true });
+      gsap.to(navbar, { y: -navH, duration: 0.45, ease: 'power2.out', force3D: true });
       prevScroll = scroll;
       return;
     } else if (direction === 1) {
